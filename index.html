@@ -202,7 +202,6 @@
     background-color: #e5e7eb;
   }
 
-  /* --- 検索履歴コンテナとチップの新しいデザイン --- */
   .search-history-container {
     display: none;
     flex-wrap: wrap;
@@ -220,7 +219,7 @@
     font-weight: 500;
     color: #4b5563;
     transition: background 0.15s, border-color 0.15s;
-    overflow: hidden; /* 中身がはみ出ないようにする */
+    overflow: hidden; 
   }
 
   .history-chip:hover {
@@ -228,13 +227,11 @@
     border-color: #d1d5db;
   }
 
-  /* チップの文字部分（クリックで検索） */
   .history-chip-text {
     padding: 4px 4px 4px 12px;
     cursor: pointer;
   }
 
-  /* チップの×ボタン部分（クリックで削除） */
   .history-chip-delete {
     display: inline-flex;
     align-items: center;
@@ -246,9 +243,8 @@
   }
 
   .history-chip-delete:hover {
-    color: #ef4444; /* マウスを乗せると赤くなる */
+    color: #ef4444; 
   }
-  /* ------------------------------------------------ */
 
   .app-section {
     margin-top: 16px;
@@ -262,7 +258,7 @@
     color: #6b7280;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    margin-bottom: 6px;
+    margin-bottom: 0; /* ラベルの横並び設定に任せるため0に変更 */
   }
 
   .app-list {
@@ -354,16 +350,6 @@
   .app-item.selected .badge-id {
     background: #c7d2fe;
     color: #1e3a8a;
-  }
-
-  .note {
-    margin-top: 14px;
-    padding: 8px 10px;
-    border-radius: 8px;
-    background: #f9fafb;
-    border: 1px dashed #d1d5db;
-    font-size: 11px;
-    color: #6b7280;
   }
 
   .link-section {
@@ -493,12 +479,11 @@
       <div id="searchHistory" class="search-history-container"></div>
 
       <div class="app-section">
-        <div class="app-section-title">検索対象アプリ</div>
+        <div class="label-row" style="margin-bottom: 8px;">
+          <div class="app-section-title">検索対象アプリ</div>
+          <div class="helper-text">※ このページはURLを生成して開くだけで、Kintone APIを叩くものではありません。</div>
+        </div>
         <div class="app-list" id="appList"></div>
-      </div>
-
-      <div class="note">
-        ※ このページはURLを生成して開くだけで、Kintone APIを叩くものではありません。
       </div>
 
       <div class="link-section">
@@ -626,7 +611,6 @@
   const googleSearchInput = document.getElementById("googleSearchInput");
   const googleSearchBtn = document.getElementById("googleSearchBtn");
 
-  // --- 1. クリアボタンの表示/非表示 ---
   const toggleClearBtn = () => {
     clearBtn.style.display = keywordInput.value ? 'flex' : 'none';
   };
@@ -639,10 +623,8 @@
     keywordInput.focus();
   });
 
-  // --- 2. 検索履歴（チップ）の描画と保存・削除処理 ---
   const MAX_HISTORY = 5;
 
-  // 履歴から特定のキーワードを削除する関数
   const removeFromHistory = (kw) => {
     let history = JSON.parse(localStorage.getItem('kintone_search_history') || '[]');
     history = history.filter(item => item !== kw);
@@ -654,7 +636,6 @@
     historyContainer.innerHTML = '';
     const history = JSON.parse(localStorage.getItem('kintone_search_history') || '[]');
     
-    // 履歴が空の場合はコンテナ自体を非表示にして隙間を詰める
     if (history.length === 0) {
       historyContainer.style.display = 'none';
     } else {
@@ -662,11 +643,9 @@
     }
     
     history.forEach(kw => {
-      // チップ全体を囲むdiv
       const chip = document.createElement('div');
       chip.className = 'history-chip';
 
-      // 文字部分（クリックで検索ボックスに入力）
       const textSpan = document.createElement('span');
       textSpan.className = 'history-chip-text';
       textSpan.textContent = kw;
@@ -676,13 +655,12 @@
         keywordInput.focus();
       });
 
-      // 削除（×）ボタン部分
       const delBtn = document.createElement('span');
       delBtn.className = 'history-chip-delete';
       delBtn.innerHTML = '<svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>';
       delBtn.title = "この履歴を削除";
       delBtn.addEventListener('click', (e) => {
-        e.stopPropagation(); // テキスト部分のクリックイベントが発火するのを防ぐ
+        e.stopPropagation(); 
         removeFromHistory(kw);
       });
 
@@ -718,7 +696,6 @@
   
   keywordInput.focus();
 
-  // --- 3. アプリリストの生成とイベント設定 ---
   apps.forEach(app => {
     const id = "app_" + app.id;
 
@@ -782,7 +759,6 @@
     });
   });
 
-  // --- 4. Google検索機能 ---
   const executeGoogleSearch = () => {
     const keyword = googleSearchInput.value.trim();
     if (!keyword) {
