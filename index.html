@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<title>J-OSAKA Kintone横断検索</title>
+<style>
+  :root {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    color-scheme: light;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    background: #f3f4f6;
+  }
+
+  .wrapper {
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 40px 16px;
+  }
+
+  .main-container {
+    max-width: 1200px;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 20px;
+    align-items: start;
+  }
+
+  .card {
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 18px 40px rgba(15, 23, 42, 0.15);
+    width: 100%;
+    padding: 24px 28px 28px;
+    box-sizing: border-box;
+  }
+
+  .sidebar {
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 18px 40px rgba(15, 23, 42, 0.15);
+    padding: 20px;
+    box-sizing: border-box;
+    position: sticky;
+    top: 40px;
+  }
+
+  .sidebar-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 16px;
+    text-align: center;
+    letter-spacing: 0.05em;
+  }
+
+  .sidebar-links {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .sidebar-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 16px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+    background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .sidebar-link::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    transition: left 0.5s;
+  }
+
+  .sidebar-link:hover::before {
+    left: 100%;
+  }
+
+  .sidebar-link:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
+  }
+
+  .sidebar-link:active {
+    transform: translateY(0);
+  }
+
+  .card-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 18px;
+  }
+
+  .card-title {
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+
+  .card-sub {
+    font-size: 12px;
+    color: #6b7280;
+  }
+
+  .field-label {
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 4px;
+  }
+
+  .search-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .search-input {
+    flex: 1;
+    height: 40px;
+    font-size: 14px;
+    padding: 0 10px;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    outline: none;
+    box-sizing: border-box;
+    transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+    background: #f9fafb;
+  }
+
+  .search-input:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.25);
+    background: #ffffff;
+  }
+
+  .helper-text {
+    font-size: 11px;
+    color: #6b7280;
+    margin-bottom: 4px;
+  }
+
+  .app-section {
+    margin-top: 12px;
+    border-top: 1px solid #e5e7eb;
+    padding-top: 12px;
+  }
+
+  .app-section-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 6px;
+  }
+
+  .app-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 8px;
+  }
+
+  .app-item {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 9px 10px;
+    border-radius: 12px;
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s, box-shadow 0.15s, transform 0.08s;
+  }
+
+  .app-item:hover {
+    background: #f3f4ff;
+    border-color: #c4d4ff;
+    box-shadow: 0 4px 10px rgba(37, 99, 235, 0.16);
+    transform: translateY(-1px);
+  }
+
+  .app-item.selected {
+    background: #eef2ff;
+    border-color: #4f46e5;
+    box-shadow: 0 6px 14px rgba(79, 70, 229, 0.25);
+  }
+
+  .app-radio {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .app-check-icon {
+    width: 18px;
+    height: 18px;
+    border-radius: 999px;
+    border: 2px solid #d1d5db;
+    box-sizing: border-box;
+    margin-top: 2px;
+    flex-shrink: 0;
+    background: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    color: #ffffff;
+    transition: border-color 0.15s, background 0.15s, color 0.15s;
+  }
+
+  .app-item.selected .app-check-icon {
+    border-color: #4f46e5;
+    background: #4f46e5;
+    color: #ffffff;
+  }
+
+  .app-label-main {
+    font-weight: 500;
+    margin-bottom: 2px;
+  }
+
+  .app-label-sub {
+    font-size: 11px;
+    color: #6b7280;
+  }
+
+  .badge-id {
+    margin-left: auto;
+    align-self: center;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px 6px;
+    border-radius: 999px;
+    font-size: 10px;
+    background: #e5e7eb;
+    color: #4b5563;
+    font-weight: 500;
+  }
+
+  .app-item.selected .badge-id {
+    background: #c7d2fe;
+    color: #1e3a8a;
+  }
+
+  .note {
+    margin-top: 14px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    background: #f9fafb;
+    border: 1px dashed #d1d5db;
+    font-size: 11px;
+    color: #6b7280;
+  }
+
+  .link-section {
+    margin-top: 20px;
+    padding-top: 14px;
+    border-top: 1px solid #e5e7eb;
+  }
+
+  .link-section-title {
+    font-size: 11px;
+    font-weight: 600;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 8px;
+  }
+
+  .link-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .link-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 7px 14px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 500;
+    text-decoration: none;
+    color: #ffffff;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    white-space: nowrap;
+    transition: all 0.15s;
+  }
+
+  .link-btn:hover {
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.3);
+    transform: translateY(-1px);
+    filter: brightness(1.1);
+  }
+
+  .link-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  /* カラーバリエーション */
+  .link-btn[data-color="blue"] { background: #3B82F6; }
+  .link-btn[data-color="green"] { background: #10B981; }
+  .link-btn[data-color="purple"] { background: #8B5CF6; }
+  .link-btn[data-color="orange"] { background: #F59E0B; }
+  .link-btn[data-color="red"] { background: #EF4444; }
+  .link-btn[data-color="pink"] { background: #EC4899; }
+  .link-btn[data-color="indigo"] { background: #6366F1; }
+  .link-btn[data-color="teal"] { background: #14B8A6; }
+  .link-btn[data-color="cyan"] { background: #06B6D4; }
+  .link-btn[data-color="lime"] { background: #84CC16; }
+  .link-btn[data-color="amber"] { background: #F59E0B; }
+  .link-btn[data-color="rose"] { background: #F43F5E; }
+  .link-btn[data-color="emerald"] { background: #10B981; }
+  .link-btn[data-color="violet"] { background: #7C3AED; }
+  .link-btn[data-color="fuchsia"] { background: #D946EF; }
+  .link-btn[data-color="sky"] { background: #0EA5E9; }
+  .link-btn[data-color="slate"] { background: #64748B; }
+
+  @media (max-width: 900px) {
+    .main-container {
+      grid-template-columns: 1fr;
+    }
+
+    .sidebar {
+      position: static;
+      order: -1;
+    }
+
+    .sidebar-links {
+      flex-direction: row;
+      flex-wrap: wrap;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .card {
+      padding: 18px 16px 22px;
+      border-radius: 12px;
+    }
+    .card-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 2px;
+    }
+
+    .link-buttons {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .link-btn {
+      width: 100%;
+      justify-content: center;
+    }
+
+    .sidebar-links {
+      flex-direction: column;
+    }
+  }
+</style>
+</head>
+<body>
+<div class="wrapper">
+  <div class="main-container">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">J-OSAKA Kintone横断検索</div>
+      </div>
+
+      <div class="field-label">会議名称（あいまい検索）</div>
+      <div class="search-row">
+        <input
+          type="text"
+          id="keyword"
+          class="search-input"
+          placeholder="例）春闘 など"
+        />
+      </div>
+      <div class="helper-text">会議名の一部を入力し、検索したいアプリをクリックすると検索が実行されます。</div>
+
+      <div class="app-section">
+        <div class="app-section-title">検索対象アプリ</div>
+        <div class="app-list" id="appList"></div>
+      </div>
+
+      <div class="note">
+        ※ このページはURLを生成して開くだけで、Kintone APIを叩くものではありません。
+      </div>
+
+      <div class="link-section">
+        <div class="link-section-title">その他のリンク</div>
+        <div class="link-buttons">
+          <a href="https://qr.quel.jp/" class="link-btn" data-color="cyan" target="_blank" rel="noopener noreferrer">
+            QRのススメ
+          </a>
+
+          <a href="https://app.bitly.com/" class="link-btn" data-color="cyan" target="_blank" rel="noopener noreferrer">
+            短縮URL
+          </a>
+
+          <a href="https://chouseisan.com/" class="link-btn" data-color="cyan" target="_blank" rel="noopener noreferrer">
+            調整さん
+          </a>
+
+          <a href="https://www.ilovepdf.com/ja" class="link-btn" data-color="cyan" target="_blank" rel="noopener noreferrer">
+            I LOVE PDF
+          </a>
+
+          <a href="https://www.canva.com/ja_jp/" class="link-btn" data-color="cyan" target="_blank" rel="noopener noreferrer">
+            Canva
+          </a>
+
+          <a href="https://chatgpt.com/" class="link-btn" data-color="amber" target="_blank" rel="noopener noreferrer">
+            ChatGPT
+          </a>
+
+          <a href="https://gemini.google.com/app" class="link-btn" data-color="amber" target="_blank" rel="noopener noreferrer">
+            Google Gemini
+          </a>
+
+          <a href="https://notebooklm.google.com/" class="link-btn" data-color="amber" target="_blank" rel="noopener noreferrer">
+            NotebookLM
+          </a>
+
+          <a href="https://claude.ai/new" class="link-btn" data-color="amber" target="_blank" rel="noopener noreferrer">
+            Claude Code
+          </a>
+
+          <a href="https://www.daiichihoki.co.jp/jichi/47link/" class="link-btn" data-color="fuchsia" target="_blank" rel="noopener noreferrer">
+            全国地方自治体リンク
+          </a>
+
+          <a href="https://jorei.slis.doshisha.ac.jp/" class="link-btn" data-color="fuchsia" target="_blank" rel="noopener noreferrer">
+            条例Webアーカイブデータベース
+          </a>
+
+          <a href="https://www.jinji.go.jp/seisaku/kisoku/ichiran.html" class="link-btn" data-color="fuchsia" target="_blank" rel="noopener noreferrer">
+            国家公務員関係法令等一覧（人事院）
+          </a>
+
+          <a href="https://www.jinji.go.jp/seisaku/kisoku/kaisei/kaisei_kisoku.html" class="link-btn" data-color="fuchsia" target="_blank" rel="noopener noreferrer">
+            新たに公布された人事院規則の概要（人事院）
+          </a>
+
+          <a href="https://www.soumu.go.jp/main_sosiki/jichi_gyousei/koumuin_seido/kaikeinendo_ninyou.html" class="link-btn" data-color="fuchsia" target="_blank" rel="noopener noreferrer">
+           会計年度任用職員制度等（総務省）
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar">
+      <div class="sidebar-title">関連リンク</div>
+      <div class="sidebar-links">
+        <a
+          href="https://remote2.cybozu.co.jp/cgi-bin/cbgrn/grn.cgi/portal/index?pid=1"
+          class="sidebar-link"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          産別ネット
+        </a>
+
+        <a
+          href="https://jichiro-osaka.cybozu.com/"
+          class="sidebar-link"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          J-OSAKA Kintone
+        </a>
+
+        <a
+          href="https://roote.ekispert.net/"
+          class="sidebar-link"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          駅すぱあと for Web
+        </a>
+
+        <a
+          href="https://jichiro-osaka.cybozu.com/k/93/"
+          class="sidebar-link"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          個人入金一覧（支払管理）
+        </a>
+
+        <a
+          href="https://business-panel.form-mailer.jp/account/forms"
+          class="sidebar-link"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          フォームメーラー
+        </a>
+
+        <a
+          href="http://210.175.251.178/rengo-osaka/"
+          class="sidebar-link"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          連合大阪Online
+        </a>
+
+        <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #e5e7eb;">
+          <div class="sidebar-title" style="margin-bottom: 8px;">Google検索</div>
+          <div style="display: flex; gap: 6px; align-items: center;">
+            <input
+              type="text"
+              id="googleSearchInput"
+              placeholder="検索キーワード"
+              style="flex: 1; min-width: 0; height: 36px; font-size: 13px; padding: 0 10px; border-radius: 8px; border: 1px solid #d1d5db; outline: none; box-sizing: border-box;"
+            />
+            <button
+              id="googleSearchBtn"
+              style="height: 36px; padding: 0 12px; border-radius: 8px; border: none; background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%); color: white; font-weight: 500; cursor: pointer; font-size: 13px; white-space: nowrap; flex-shrink: 0;"
+            >
+            検索
+            </button>
+           </div>
+          </div>   
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  const apps = [
+    {
+      id: "85",
+      labelMain: "会議出欠登録",
+      labelSub: "出欠の管理・確認に使用",
+      base: "https://jichiro-osaka.cybozu.com/k/85/?query=",
+      query: '会議名 like "__KW__"'
+    },
+    {
+      id: "84",
+      labelMain: "会議・行事等登録",
+      labelSub: "会議の基本情報・発文など",
+      base: "https://jichiro-osaka.cybozu.com/k/84/?query=",
+      query:
+        '文字列格納用フィールド like "__KW__"' +
+        ' or 会議体名称 like "__KW__"' +
+        ' or 追加する文字列 like "__KW__"' +
+        ' or 会議名 like "__KW__"'
+    },
+    {
+      id: "103",
+      labelMain: "経費精算申請",
+      labelSub: "会議名や調書表題で検索",
+      base: "https://jichiro-osaka.cybozu.com/k/103/?q=&view=11124481&query=",
+      query:
+        '支出調書用表題 like "__KW__"' +
+        ' or 会議・集会名等 like "__KW__"'
+    },
+    {
+      id: "105",
+      labelMain: "飲食精算申請",
+      labelSub: "会議名・表題などで検索",
+      base: "https://jichiro-osaka.cybozu.com/k/105/?view=20&query=",
+      query:
+        '文字列格納用フィールド like "__KW__"' +
+        ' or 会議・集会名等 like "__KW__"' +
+        ' or 支出調書用標題 like "__KW__"'
+    },
+    {
+      id: "117",
+      labelMain: "旅費交通費申請",
+      labelSub: "調書用表題・会議名など",
+      base: "https://jichiro-osaka.cybozu.com/k/117/?query=",
+      query:
+        '文字列格納用フィールド like "__KW__"' +
+        ' or 調書用表題 like "__KW__"' +
+        ' or 会議・行事等名 like "__KW__"'
+    },
+    {
+      id: "112",
+      labelMain: "講演料・報酬支払",
+      labelSub: "講演に関する支払を検索",
+      base: "https://jichiro-osaka.cybozu.com/k/112/?view=20&query=",
+      query:
+        '支払合計金額判定 like "__KW__"' +
+        ' or 支出調書用表題 like "__KW__"' +
+        ' or 会議・集会名等 like "__KW__"'
+    }
+  ];
+
+  const appListEl = document.getElementById("appList");
+
+  apps.forEach(app => {
+    const id = "app_" + app.id;
+
+    const wrapper = document.createElement("label");
+    wrapper.className = "app-item";
+    wrapper.dataset.appId = app.id;
+
+    const radio = document.createElement("input");
+    radio.type = "radio";
+    radio.name = "app";
+    radio.value = app.id;
+    radio.id = id;
+    radio.className = "app-radio";
+
+    const icon = document.createElement("div");
+    icon.className = "app-check-icon";
+    icon.textContent = "";
+
+    const textWrap = document.createElement("div");
+    const main = document.createElement("div");
+    main.className = "app-label-main";
+    main.textContent = app.labelMain;
+
+    const sub = document.createElement("div");
+    sub.className = "app-label-sub";
+    sub.textContent = app.labelSub;
+
+    textWrap.appendChild(main);
+    textWrap.appendChild(sub);
+
+    const badgeId = document.createElement("div");
+    badgeId.className = "badge-id";
+    badgeId.textContent = "ID " + app.id;
+
+    wrapper.appendChild(radio);
+    wrapper.appendChild(icon);
+    wrapper.appendChild(textWrap);
+    wrapper.appendChild(badgeId);
+
+    appListEl.appendChild(wrapper);
+
+    wrapper.addEventListener("click", () => {
+      const kw = document.getElementById("keyword").value.trim();
+      if (!kw) {
+        alert("会議名称を入力してください。");
+        return;
+      }
+
+      document.querySelectorAll(".app-item").forEach(el => {
+        el.classList.remove("selected");
+      });
+      radio.checked = true;
+      wrapper.classList.add("selected");
+
+      const query = app.query.replace(/__KW__/g, kw);
+      const url = app.base + encodeURIComponent(query);
+
+      window.open(url, "_blank");
+    });
+  });
+
+  document.getElementById("keyword").focus();
+
+  // Google検索機能
+  const googleSearchBtn = document.getElementById("googleSearchBtn");
+  const googleSearchInput = document.getElementById("googleSearchInput");
+
+  googleSearchBtn.addEventListener("click", () => {
+    const keyword = googleSearchInput.value.trim();
+    if (!keyword) {
+      alert("検索キーワードを入力してください。");
+      return;
+    }
+    const searchUrl = "https://www.google.com/search?q=" + encodeURIComponent(keyword);
+    window.open(searchUrl, "_blank");
+  });
+
+  // Enterキーでも検索できるようにする
+  googleSearchInput.addEventListener("keypress", (e) => {
+    if (e.key === "Enter") {
+      googleSearchBtn.click();
+    }
+  });
+})();
+</script>
+</body>
+</html>
