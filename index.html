@@ -126,19 +126,34 @@
     color: #6b7280;
   }
 
+  .label-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    flex-wrap: wrap; 
+    gap: 4px;
+    margin-bottom: 6px;
+  }
+
   .field-label {
     font-size: 13px;
     font-weight: 500;
-    margin-bottom: 4px;
+    margin-bottom: 0;
+  }
+
+  .helper-text {
+    font-size: 11px;
+    color: #6b7280;
+    margin-bottom: 0;
+    text-align: right;
   }
 
   .search-row {
     display: flex;
     gap: 8px;
-    margin-bottom: 12px;
+    margin-bottom: 0; /* 空白を詰めるために0に変更 */
   }
 
-  /* 検索窓のレイアウト調整（クリアボタン用） */
   .search-input-wrapper {
     position: relative;
     flex: 1;
@@ -149,7 +164,7 @@
     flex: 1;
     height: 40px;
     font-size: 14px;
-    padding: 0 36px 0 10px; /* 右側にクリアボタン用の余白を確保 */
+    padding: 0 10px 0 36px;
     border-radius: 8px;
     border: 1px solid #d1d5db;
     outline: none;
@@ -165,10 +180,9 @@
     background: #ffffff;
   }
 
-  /* クリア（×）ボタンのデザイン */
   .clear-btn {
     position: absolute;
-    right: 6px;
+    left: 6px;
     top: 50%;
     transform: translateY(-50%);
     background: transparent;
@@ -188,16 +202,39 @@
     background-color: #e5e7eb;
   }
 
-  .helper-text {
+  /* 検索履歴コンテナの調整（空の時は高さを0にする） */
+  .search-history-container {
+    display: none; /* 初期状態は非表示（JavaScriptで制御） */
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+  }
+
+  .history-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 12px;
+    background: #f3f4f6;
+    color: #4b5563;
+    border-radius: 999px;
     font-size: 11px;
-    color: #6b7280;
-    margin-bottom: 4px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s, transform 0.1s;
+    border: 1px solid #e5e7eb;
+  }
+
+  .history-chip:hover {
+    background: #e5e7eb;
+    color: #111827;
+    border-color: #d1d5db;
+    transform: translateY(-1px);
   }
 
   .app-section {
-    margin-top: 12px;
+    margin-top: 16px; /* 検索窓との余白を最適化 */
     border-top: 1px solid #e5e7eb;
-    padding-top: 12px;
+    padding-top: 16px;
   }
 
   .app-section-title {
@@ -412,7 +449,10 @@
         <div class="card-title">J-OSAKA Kintone横断検索</div>
       </div>
 
-      <div class="field-label">会議名称（あいまい検索）</div>
+      <div class="label-row">
+        <div class="field-label">会議名称（あいまい検索）</div>
+        <div class="helper-text">会議名の一部を入力し、検索したいアプリをクリックすると検索が実行されます。</div>
+      </div>
       
       <div class="search-row">
         <div class="search-input-wrapper">
@@ -431,7 +471,7 @@
         </div>
       </div>
       
-      <div class="helper-text">会議名の一部を入力し、検索したいアプリをクリックすると検索が実行されます。</div>
+      <div id="searchHistory" class="search-history-container"></div>
 
       <div class="app-section">
         <div class="app-section-title">検索対象アプリ</div>
@@ -474,7 +514,6 @@
         <a href="https://jichiro-osaka.cybozu.com/k/93/" class="sidebar-link" target="_blank" rel="noopener noreferrer">個人入金一覧（支払管理）</a>
         <a href="https://business-panel.form-mailer.jp/account/forms" class="sidebar-link" target="_blank" rel="noopener noreferrer">フォームメーラー</a>
         <a href="http://210.175.251.178/rengo-osaka/" class="sidebar-link" target="_blank" rel="noopener noreferrer">連合大阪Online</a>
-        
         <a href="https://www.rokin.or.jp/other/qrslip/" class="sidebar-link" target="_blank" rel="noopener noreferrer">ろうきんQR伝票作成</a>
 
         <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #e5e7eb;">
@@ -564,10 +603,11 @@
   const appListEl = document.getElementById("appList");
   const keywordInput = document.getElementById("keyword");
   const clearBtn = document.getElementById("clearBtn");
+  const historyContainer = document.getElementById("searchHistory");
   const googleSearchInput = document.getElementById("googleSearchInput");
   const googleSearchBtn = document.getElementById("googleSearchBtn");
 
-  // --- 1. クリアボタンの表示/非表示を切り替える処理 ---
+  // --- 1. クリアボタンの表示/非表示 ---
   const toggleClearBtn = () => {
     clearBtn.style.display = keywordInput.value ? 'flex' : 'none';
   };
@@ -576,19 +616,58 @@
 
   clearBtn.addEventListener('click', () => {
     keywordInput.value = '';
-    localStorage.removeItem('kintone_search_kw'); // 保存データも消去
     toggleClearBtn();
     keywordInput.focus();
   });
 
-  // --- 2. 保存されたキーワードの読み込みとフォーカス ---
-  const savedKw = localStorage.getItem('kintone_search_kw');
-  const savedGoogleKw = localStorage.getItem('google_search_kw');
-  
-  if (savedKw) {
-    keywordInput.value = savedKw;
-    toggleClearBtn(); // 値が入ったらクリアボタンを表示
+  // --- 2. 検索履歴（チップ）の描画と保存処理 ---
+  const MAX_HISTORY = 5;
+
+  const renderHistory = () => {
+    historyContainer.innerHTML = '';
+    const history = JSON.parse(localStorage.getItem('kintone_search_history') || '[]');
+    
+    // 履歴が空の場合はコンテナ自体を非表示にして隙間を詰める
+    if (history.length === 0) {
+      historyContainer.style.display = 'none';
+    } else {
+      historyContainer.style.display = 'flex';
+    }
+    
+    history.forEach(kw => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'history-chip';
+      btn.textContent = kw;
+      btn.addEventListener('click', () => {
+        keywordInput.value = kw;
+        toggleClearBtn();
+        keywordInput.focus();
+      });
+      historyContainer.appendChild(btn);
+    });
+  };
+
+  const saveToHistory = (kw) => {
+    let history = JSON.parse(localStorage.getItem('kintone_search_history') || '[]');
+    history = history.filter(item => item !== kw);
+    history.unshift(kw);
+    if (history.length > MAX_HISTORY) {
+      history.pop();
+    }
+    localStorage.setItem('kintone_search_history', JSON.stringify(history));
+    renderHistory();
+  };
+
+  renderHistory();
+
+  const currentHistory = JSON.parse(localStorage.getItem('kintone_search_history') || '[]');
+  if (currentHistory.length > 0) {
+    keywordInput.value = currentHistory[0];
+    toggleClearBtn();
   }
+  
+  const savedGoogleKw = localStorage.getItem('google_search_kw');
   if (savedGoogleKw) {
     googleSearchInput.value = savedGoogleKw;
   }
@@ -644,8 +723,7 @@
         return;
       }
 
-      // 検索実行時にKintone用のキーワードを保存
-      localStorage.setItem('kintone_search_kw', kw);
+      saveToHistory(kw);
 
       document.querySelectorAll(".app-item").forEach(el => {
         el.classList.remove("selected");
@@ -667,7 +745,6 @@
       alert("検索キーワードを入力してください。");
       return;
     }
-    // 検索実行時にGoogle用のキーワードを保存
     localStorage.setItem('google_search_kw', keyword);
     
     const searchUrl = "https://www.google.com/search?q=" + encodeURIComponent(keyword);
