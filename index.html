@@ -480,57 +480,27 @@
     <div class="sidebar">
       <div class="sidebar-title">関連リンク</div>
       <div class="sidebar-links">
-        <a
-          href="https://remote2.cybozu.co.jp/cgi-bin/cbgrn/grn.cgi/portal/index?pid=1"
-          class="sidebar-link"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
+        <a href="https://remote2.cybozu.co.jp/cgi-bin/cbgrn/grn.cgi/portal/index?pid=1" class="sidebar-link" target="_blank" rel="noopener noreferrer">
           産別ネット
         </a>
 
-        <a
-          href="https://jichiro-osaka.cybozu.com/"
-          class="sidebar-link"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
+        <a href="https://jichiro-osaka.cybozu.com/" class="sidebar-link" target="_blank" rel="noopener noreferrer">
           J-OSAKA Kintone
         </a>
 
-        <a
-          href="https://roote.ekispert.net/"
-          class="sidebar-link"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
+        <a href="https://roote.ekispert.net/" class="sidebar-link" target="_blank" rel="noopener noreferrer">
           駅すぱあと for Web
         </a>
 
-        <a
-          href="https://jichiro-osaka.cybozu.com/k/93/"
-          class="sidebar-link"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
+        <a href="https://jichiro-osaka.cybozu.com/k/93/" class="sidebar-link" target="_blank" rel="noopener noreferrer">
           個人入金一覧（支払管理）
         </a>
 
-        <a
-          href="https://business-panel.form-mailer.jp/account/forms"
-          class="sidebar-link"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
+        <a href="https://business-panel.form-mailer.jp/account/forms" class="sidebar-link" target="_blank" rel="noopener noreferrer">
           フォームメーラー
         </a>
 
-        <a
-          href="http://210.175.251.178/rengo-osaka/"
-          class="sidebar-link"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
+        <a href="http://210.175.251.178/rengo-osaka/" class="sidebar-link" target="_blank" rel="noopener noreferrer">
           連合大阪Online
         </a>
 
@@ -619,7 +589,20 @@
   ];
 
   const appListEl = document.getElementById("appList");
+  const keywordInput = document.getElementById("keyword");
+  const googleSearchInput = document.getElementById("googleSearchInput");
+  const googleSearchBtn = document.getElementById("googleSearchBtn");
 
+  // --- 1. 保存されたキーワードの読み込みとフォーカス ---
+  const savedKw = localStorage.getItem('kintone_search_kw');
+  const savedGoogleKw = localStorage.getItem('google_search_kw');
+  
+  if (savedKw) keywordInput.value = savedKw;
+  if (savedGoogleKw) googleSearchInput.value = savedGoogleKw;
+  
+  keywordInput.focus();
+
+  // --- 2. アプリリストの生成とイベント設定 ---
   apps.forEach(app => {
     const id = "app_" + app.id;
 
@@ -662,11 +645,14 @@
     appListEl.appendChild(wrapper);
 
     wrapper.addEventListener("click", () => {
-      const kw = document.getElementById("keyword").value.trim();
+      const kw = keywordInput.value.trim();
       if (!kw) {
         alert("会議名称を入力してください。");
         return;
       }
+
+      // 検索実行時にKintone用のキーワードを保存
+      localStorage.setItem('kintone_search_kw', kw);
 
       document.querySelectorAll(".app-item").forEach(el => {
         el.classList.remove("selected");
@@ -681,28 +667,29 @@
     });
   });
 
-  document.getElementById("keyword").focus();
-
-  // Google検索機能
-  const googleSearchBtn = document.getElementById("googleSearchBtn");
-  const googleSearchInput = document.getElementById("googleSearchInput");
-
-  googleSearchBtn.addEventListener("click", () => {
+  // --- 3. Google検索機能 ---
+  const executeGoogleSearch = () => {
     const keyword = googleSearchInput.value.trim();
     if (!keyword) {
       alert("検索キーワードを入力してください。");
       return;
     }
+    // 検索実行時にGoogle用のキーワードを保存
+    localStorage.setItem('google_search_kw', keyword);
+    
     const searchUrl = "https://www.google.com/search?q=" + encodeURIComponent(keyword);
     window.open(searchUrl, "_blank");
-  });
+  };
+
+  googleSearchBtn.addEventListener("click", executeGoogleSearch);
 
   // Enterキーでも検索できるようにする
   googleSearchInput.addEventListener("keypress", (e) => {
     if (e.key === "Enter") {
-      googleSearchBtn.click();
+      executeGoogleSearch();
     }
   });
+
 })();
 </script>
 </body>
