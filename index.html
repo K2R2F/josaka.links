@@ -104,6 +104,68 @@
     color: #1d4ed8;
   }
 
+  .sidebar-tool {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid #e5e7eb;
+  }
+
+  .sidebar-tool-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #374151;
+    margin-bottom: 8px;
+  }
+
+  .garoon-row {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+
+  #garoonDateInput {
+    flex: 1;
+    min-width: 0;
+    height: 38px;
+    font-size: 13px;
+    padding: 0 9px;
+    border-radius: 10px;
+    border: 1px solid #cfd6e3;
+    outline: none;
+    box-sizing: border-box;
+    background: #ffffff;
+  }
+
+  #garoonDateInput:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14);
+  }
+
+  #garoonScheduleBtn {
+    height: 38px;
+    padding: 0 12px;
+    border-radius: 10px;
+    border: none;
+    background: #4f7f35;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 700;
+    white-space: nowrap;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  #garoonScheduleBtn:hover {
+    background: #426b2d;
+  }
+
+  .garoon-hint {
+    margin-top: 7px;
+    font-size: 11.5px;
+    line-height: 1.45;
+    color: #6b7280;
+  }
+
   .card-header {
     display: flex;
     align-items: baseline;
@@ -603,6 +665,15 @@
         <a href="http://210.175.251.178/rengo-osaka/" class="sidebar-link" target="_blank" rel="noopener noreferrer">連合大阪Online</a>
         <a href="https://www.rokin.or.jp/other/qrslip/" class="sidebar-link" target="_blank" rel="noopener noreferrer">ろうきんQR伝票作成</a>
       </div>
+
+      <div class="sidebar-tool">
+        <div class="sidebar-tool-title">ガルーン日程一覧</div>
+        <div class="garoon-row">
+          <input type="date" id="garoonDateInput" aria-label="ガルーン日程一覧の日付" />
+          <button type="button" id="garoonScheduleBtn">表示</button>
+        </div>
+        <div class="garoon-hint">選択日から一週間分の書記局日程を開きます。</div>
+      </div>
     </div>
   </div>
 </div>
@@ -735,6 +806,8 @@
   const clearBtn = document.getElementById("clearBtn");
   const historyContainer = document.getElementById("searchHistory");
   const googleSearchBtn = document.getElementById("googleSearchBtn");
+  const garoonDateInput = document.getElementById("garoonDateInput");
+  const garoonScheduleBtn = document.getElementById("garoonScheduleBtn");
 
   const toggleClearBtn = () => {
     clearBtn.style.display = keywordInput.value ? "flex" : "none";
@@ -931,6 +1004,31 @@
   };
 
   googleSearchBtn.addEventListener("click", executeGoogleSearch);
+
+  const formatLocalDate = (date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return year + "-" + month + "-" + day;
+  };
+
+  const buildGaroonScheduleUrl = (dateStr) => {
+    return "https://remote2.cybozu.co.jp/cgi-bin/cbgrn/grn.cgi/schedule/index?uid=&gid=&bdate=" +
+      encodeURIComponent(dateStr) +
+      "&event=&event_date=&search_text=&p=";
+  };
+
+  garoonDateInput.value = formatLocalDate(new Date());
+
+  garoonScheduleBtn.addEventListener("click", () => {
+    const dateStr = garoonDateInput.value;
+    if (!dateStr) {
+      alert("日付を選んでください。");
+      return;
+    }
+
+    window.open(buildGaroonScheduleUrl(dateStr), "_blank");
+  });
 })();
 </script>
 </body>
