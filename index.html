@@ -107,17 +107,18 @@
   .card-header {
     display: flex;
     align-items: baseline;
-    justify-content: space-between;
+    justify-content: flex-end;
     gap: 8px;
-    margin-bottom: 20px;
-    padding-bottom: 14px;
-    border-bottom: 1px solid #e5e7eb;
+    margin-bottom: 10px;
+    padding-bottom: 0;
+    border-bottom: none;
   }
 
   .card-title {
-    font-size: 22px;
+    font-size: 12px;
     font-weight: 700;
     letter-spacing: 0.01em;
+    color: #6b7280;
   }
 
   .card-sub {
@@ -127,10 +128,10 @@
 
   .label-row {
     display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
+    align-items: baseline;
+    justify-content: flex-start;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: 6px;
     margin-bottom: 6px;
   }
 
@@ -145,14 +146,20 @@
     font-size: 12px;
     color: #6b7280;
     margin-bottom: 0;
-    text-align: right;
+    text-align: left;
     line-height: 1.5;
+  }
+
+  .helper-text::before {
+    content: "｜";
+    color: #cbd5e1;
+    margin-right: 6px;
   }
 
   .search-row {
     display: flex;
     gap: 8px;
-    margin-top: 8px;
+    margin-top: 6px;
     margin-bottom: 0;
   }
 
@@ -271,38 +278,77 @@
   }
 
   .app-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .app-group {
+    overflow: hidden;
+    border: 1px solid #dbe1ea;
+    border-radius: 10px;
+    background: #ffffff;
+  }
+
+  .app-group-header {
+    padding: 10px 14px;
+    text-align: center;
+    font-size: 15px;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+  }
+
+  .app-group[data-tone="common"] .app-group-header {
+    background: #4f7f35;
+    color: #ffffff;
+  }
+
+  .app-group[data-tone="expense"] .app-group-header {
+    background: #ffd95a;
+    color: #111827;
+  }
+
+  .app-grid {
     display: grid;
-    grid-template-columns: repeat(2, minmax(260px, 1fr));
-    gap: 10px;
+    grid-template-columns: repeat(auto-fit, minmax(142px, 1fr));
   }
 
   .app-item {
     position: relative;
     display: flex;
-    align-items: flex-start;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     gap: 8px;
-    min-height: 58px;
-    padding: 12px 12px;
-    border-radius: 12px;
-    background: #ffffff;
-    border: 1px solid #dbe1ea;
+    min-height: 136px;
+    padding: 14px 12px;
+    border: 0;
+    border-right: 1px solid rgba(255, 255, 255, 0.85);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.85);
+    border-radius: 0;
     font-size: 13px;
+    text-align: center;
     cursor: pointer;
-    transition: background 0.15s, border-color 0.15s, box-shadow 0.15s, transform 0.08s;
+    transition: filter 0.15s, box-shadow 0.15s, transform 0.08s;
     box-sizing: border-box;
   }
 
+  .app-group[data-tone="common"] .app-item {
+    background: #c9e3b9;
+  }
+
+  .app-group[data-tone="expense"] .app-item {
+    background: #fff1c9;
+  }
+
   .app-item:hover {
-    background: #f8fbff;
-    border-color: #93b4ff;
-    box-shadow: 0 6px 14px rgba(37, 99, 235, 0.12);
+    filter: brightness(1.03);
+    box-shadow: inset 0 0 0 2px rgba(37, 99, 235, 0.24);
     transform: translateY(-1px);
   }
 
   .app-item.selected {
-    background: #eef4ff;
-    border-color: #2563eb;
-    box-shadow: 0 6px 16px rgba(37, 99, 235, 0.18);
+    box-shadow: inset 0 0 0 3px rgba(37, 99, 235, 0.45);
   }
 
   .app-radio {
@@ -311,66 +357,18 @@
     pointer-events: none;
   }
 
-  .app-check-icon {
-    width: 20px;
-    height: 20px;
-    border-radius: 999px;
-    border: 2px solid #d1d5db;
-    box-sizing: border-box;
-    margin-top: 1px;
-    flex-shrink: 0;
-    background: #ffffff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 11px;
-    color: #ffffff;
-    transition: border-color 0.15s, background 0.15s, color 0.15s;
-  }
-
-  .app-item.selected .app-check-icon {
-    border-color: #2563eb;
-    background: #2563eb;
-    color: #ffffff;
-  }
-
-  .app-item.selected .app-check-icon::after {
-    content: "✓";
-    font-size: 12px;
-    line-height: 1;
+  .app-icon-image {
+    width: 68px;
+    height: 68px;
+    object-fit: contain;
+    display: block;
   }
 
   .app-label-main {
     font-size: 13px;
     font-weight: 700;
     margin-bottom: 2px;
-    color: #111827;
-  }
-
-  .app-label-sub {
-    font-size: 11.5px;
-    color: #6b7280;
-    line-height: 1.35;
-  }
-
-  .badge-id {
-    margin-left: auto;
-    align-self: center;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 3px 7px;
-    border-radius: 999px;
-    font-size: 10px;
-    background: #f1f5f9;
-    color: #4b5563;
-    font-weight: 500;
-    white-space: nowrap;
-  }
-
-  .app-item.selected .badge-id {
-    background: #dbeafe;
-    color: #1e3a8a;
+    color: #0369a1;
   }
 
   .link-section {
@@ -433,39 +431,9 @@
     background: #9333ea;
   }
 
-  .sidebar-search-box {
-    margin-top: 16px;
-    padding-top: 16px;
-    border-top: 1px solid #e5e7eb;
-  }
-
-  .google-search-row {
-    display: flex;
-    gap: 6px;
-    align-items: center;
-  }
-
-  #googleSearchInput {
-    flex: 1;
-    min-width: 0;
-    height: 38px;
-    font-size: 13px;
-    padding: 0 10px;
-    border-radius: 10px;
-    border: 1px solid #cfd6e3;
-    outline: none;
-    box-sizing: border-box;
-    background: #ffffff;
-  }
-
-  #googleSearchInput:focus {
-    border-color: #2563eb;
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14);
-  }
-
   #googleSearchBtn {
-    height: 38px;
-    padding: 0 12px;
+    height: 46px;
+    padding: 0 16px;
     border-radius: 10px;
     border: none;
     background: #2563eb;
@@ -515,13 +483,12 @@
     }
 
     .card-header {
-      flex-direction: column;
-      align-items: flex-start;
+      align-items: flex-end;
       gap: 2px;
     }
 
     .card-title {
-      font-size: 19px;
+      font-size: 12px;
     }
 
     .label-row {
@@ -532,7 +499,15 @@
       text-align: left;
     }
 
-    .app-list {
+    .search-row {
+      flex-wrap: wrap;
+    }
+
+    #googleSearchBtn {
+      width: 100%;
+    }
+
+    .app-grid {
       grid-template-columns: 1fr;
     }
 
@@ -563,7 +538,7 @@
 
       <div class="label-row">
         <div class="field-label">会議名称（あいまい検索）</div>
-        <div class="helper-text">会議名の一部を入力し、検索したいアプリをクリックすると検索が実行されます。</div>
+        <div class="helper-text">未入力なら選択したアプリのトップページへ</div>
       </div>
 
       <div class="search-row">
@@ -581,15 +556,14 @@
             </svg>
           </button>
         </div>
+        <button type="button" id="googleSearchBtn">
+          Google検索
+        </button>
       </div>
 
       <div id="searchHistory" class="search-history-container"></div>
 
       <div class="app-section">
-        <div class="label-row" style="margin-bottom: 8px;">
-          <div class="app-section-title">入力後、検索先のKintoneアプリを選択</div>
-          <div class="helper-text">※ このページはURLを生成して開くだけで、Kintone APIを叩くものではありません。</div>
-        </div>
         <div class="app-list" id="appList"></div>
       </div>
 
@@ -628,20 +602,6 @@
         <a href="https://business-panel.form-mailer.jp/account/forms" class="sidebar-link" target="_blank" rel="noopener noreferrer">フォームメーラー</a>
         <a href="http://210.175.251.178/rengo-osaka/" class="sidebar-link" target="_blank" rel="noopener noreferrer">連合大阪Online</a>
         <a href="https://www.rokin.or.jp/other/qrslip/" class="sidebar-link" target="_blank" rel="noopener noreferrer">ろうきんQR伝票作成</a>
-
-        <div class="sidebar-search-box">
-          <div class="sidebar-title" style="margin-bottom: 8px;">Google検索</div>
-          <div class="google-search-row">
-            <input
-              type="text"
-              id="googleSearchInput"
-              placeholder="検索キーワード"
-            />
-            <button id="googleSearchBtn">
-              検索
-            </button>
-          </div>
-        </div>
       </div>
     </div>
   </div>
@@ -649,63 +609,124 @@
 
 <script>
 (function () {
-  const apps = [
+  const kintoneOrigin = "https://jichiro-osaka.cybozu.com";
+
+  const appGroups = [
     {
-      id: "85",
-      labelMain: "会議出欠登録",
-      labelSub: "出欠の管理・確認に使用",
-      base: "https://jichiro-osaka.cybozu.com/k/85/?query=",
-      query: '会議名 like "__KW__"'
+      title: "共通利用",
+      tone: "common",
+      apps: [
+        {
+          key: "attendance",
+          id: "85",
+          labelMain: "会議出欠登録",
+          icon: "assets/attendance.png",
+          mode: "query",
+          base: kintoneOrigin + "/k/85/?query=",
+          query: '会議名 like "__KW__"'
+        },
+        {
+          key: "meeting",
+          id: "84",
+          labelMain: "会議・行事登録",
+          icon: "assets/meeting.png",
+          mode: "query",
+          base: kintoneOrigin + "/k/84/?query=",
+          query:
+            '文字列格納用フィールド like "__KW__"' +
+            ' or 会議体名称 like "__KW__"' +
+            ' or 追加する文字列 like "__KW__"' +
+            ' or 会議名 like "__KW__"'
+        },
+        {
+          key: "faq",
+          id: "176",
+          labelMain: "FAQ・不具合",
+          icon: "assets/faq.png",
+          mode: "top"
+        },
+        {
+          key: "accounting-delete",
+          id: "176",
+          labelMain: "会議等削除申請",
+          icon: "assets/delete-request.png",
+          mode: "keyword"
+        },
+        {
+          key: "taxi-ticket",
+          id: "179",
+          labelMain: "タクチケ申請",
+          icon: "assets/taxi-ticket.png",
+          mode: "keyword"
+        },
+        {
+          key: "zoom-id",
+          id: "98",
+          labelMain: "ZoomID申請",
+          icon: "assets/zoom.png",
+          mode: "keyword"
+        }
+      ]
     },
     {
-      id: "84",
-      labelMain: "会議・行事等登録",
-      labelSub: "会議の基本情報・発文など",
-      base: "https://jichiro-osaka.cybozu.com/k/84/?query=",
-      query:
-        '文字列格納用フィールド like "__KW__"' +
-        ' or 会議体名称 like "__KW__"' +
-        ' or 追加する文字列 like "__KW__"' +
-        ' or 会議名 like "__KW__"'
-    },
-    {
-      id: "103",
-      labelMain: "経費精算申請",
-      labelSub: "会議名や調書表題で検索",
-      base: "https://jichiro-osaka.cybozu.com/k/103/?q=&view=11124481&query=",
-      query:
-        '支出調書用表題 like "__KW__"' +
-        ' or 会議・集会名等 like "__KW__"'
-    },
-    {
-      id: "105",
-      labelMain: "飲食精算申請",
-      labelSub: "会議名・表題などで検索",
-      base: "https://jichiro-osaka.cybozu.com/k/105/?view=20&query=",
-      query:
-        '文字列格納用フィールド like "__KW__"' +
-        ' or 会議・集会名等 like "__KW__"' +
-        ' or 支出調書用標題 like "__KW__"'
-    },
-    {
-      id: "117",
-      labelMain: "旅費交通費申請",
-      labelSub: "調書用表題・会議名など",
-      base: "https://jichiro-osaka.cybozu.com/k/117/?query=",
-      query:
-        '文字列格納用フィールド like "__KW__"' +
-        ' or 調書用表題 like "__KW__"' +
-        ' or 会議・行事等名 like "__KW__"'
-    },
-    {
-      id: "112",
-      labelMain: "講演料・報酬支払",
-      labelSub: "講演に関する支払を検索",
-      base: "https://jichiro-osaka.cybozu.com/k/112/?view=20&query=",
-      query:
-        '支払合計金額判定 like "__KW__"' +
-        ' or 支出調書用表題 like "__KW__"' +
-        ' or 会議・集会名等 like "__KW__"'
+      title: "経費等支払・請求申請",
+      tone: "expense",
+      apps: [
+        {
+          key: "expense",
+          id: "103",
+          labelMain: "経費精算申請",
+          icon: "assets/expense.png",
+          mode: "query",
+          base: kintoneOrigin + "/k/103/?q=&view=11124481&query=",
+          query:
+            '支出調書用表題 like "__KW__"' +
+            ' or 会議・集会名等 like "__KW__"'
+        },
+        {
+          key: "food",
+          id: "105",
+          labelMain: "飲食精算申請",
+          icon: "assets/food.png",
+          mode: "query",
+          base: kintoneOrigin + "/k/105/?view=20&query=",
+          query:
+            '文字列格納用フィールド like "__KW__"' +
+            ' or 会議・集会名等 like "__KW__"' +
+            ' or 支出調書用標題 like "__KW__"'
+        },
+        {
+          key: "travel",
+          id: "117",
+          labelMain: "旅費交通費申請",
+          icon: "assets/travel.png",
+          mode: "query",
+          base: kintoneOrigin + "/k/117/?query=",
+          query:
+            '文字列格納用フィールド like "__KW__"' +
+            ' or 調書用表題 like "__KW__"' +
+            ' or 会議・行事等名 like "__KW__"'
+        },
+        {
+          key: "speaker",
+          id: "112",
+          labelMain: "講演料・報酬",
+          icon: "assets/speaker.png",
+          mode: "query",
+          base: kintoneOrigin + "/k/112/?view=20&query=",
+          query:
+            '支払合計金額判定 like "__KW__"' +
+            ' or 支出調書用表題 like "__KW__"' +
+            ' or 会議・集会名等 like "__KW__"'
+        },
+        {
+          key: "activity-expense",
+          id: "61",
+          labelMain: "精算行動費申請",
+          icon: "assets/activity-expense.png",
+          mode: "top"
+        }
+      ]
     }
   ];
 
@@ -713,7 +734,6 @@
   const keywordInput = document.getElementById("keyword");
   const clearBtn = document.getElementById("clearBtn");
   const historyContainer = document.getElementById("searchHistory");
-  const googleSearchInput = document.getElementById("googleSearchInput");
   const googleSearchBtn = document.getElementById("googleSearchBtn");
 
   const toggleClearBtn = () => {
@@ -794,29 +814,52 @@
     toggleClearBtn();
   }
 
-  const savedGoogleKw = localStorage.getItem("google_search_kw");
-  if (savedGoogleKw) {
-    googleSearchInput.value = savedGoogleKw;
-  }
-
   keywordInput.focus();
 
-  apps.forEach(app => {
-    const id = "app_" + app.id;
+  const topUrlForApp = (app) => {
+    return app.topUrl || (kintoneOrigin + "/k/" + app.id + "/");
+  };
+
+  const buildAppUrl = (app, kw) => {
+    if (app.mode === "top" || !kw) {
+      return topUrlForApp(app);
+    }
+
+    if (app.mode === "keyword") {
+      return kintoneOrigin + "/k/search?keyword=" + encodeURIComponent(kw) + "&app=" + encodeURIComponent(app.id);
+    }
+
+    const query = app.query.replace(/__KW__/g, kw);
+    return app.base + encodeURIComponent(query);
+  };
+
+  const shouldSaveHistory = (app, kw) => {
+    return Boolean(kw && app.mode !== "top");
+  };
+
+  const createAppTile = (app) => {
+    const id = "app_" + app.key;
 
     const wrapper = document.createElement("label");
     wrapper.className = "app-item";
     wrapper.dataset.appId = app.id;
+    wrapper.dataset.appKey = app.key;
 
     const radio = document.createElement("input");
     radio.type = "radio";
     radio.name = "app";
-    radio.value = app.id;
+    radio.value = app.key;
     radio.id = id;
     radio.className = "app-radio";
 
-    const icon = document.createElement("div");
-    icon.className = "app-check-icon";
+    let icon = null;
+    if (app.icon) {
+      icon = document.createElement("img");
+      icon.className = "app-icon-image";
+      icon.src = app.icon;
+      icon.alt = "";
+      icon.loading = "lazy";
+    }
 
     const textWrap = document.createElement("div");
 
@@ -824,32 +867,20 @@
     main.className = "app-label-main";
     main.textContent = app.labelMain;
 
-    const sub = document.createElement("div");
-    sub.className = "app-label-sub";
-    sub.textContent = app.labelSub;
-
     textWrap.appendChild(main);
-    textWrap.appendChild(sub);
-
-    const badgeId = document.createElement("div");
-    badgeId.className = "badge-id";
-    badgeId.textContent = "ID " + app.id;
 
     wrapper.appendChild(radio);
-    wrapper.appendChild(icon);
+    if (icon) {
+      wrapper.appendChild(icon);
+    }
     wrapper.appendChild(textWrap);
-    wrapper.appendChild(badgeId);
-
-    appListEl.appendChild(wrapper);
 
     wrapper.addEventListener("click", () => {
       const kw = keywordInput.value.trim();
-      if (!kw) {
-        alert("会議名称を入力してください。");
-        return;
-      }
 
-      saveToHistory(kw);
+      if (shouldSaveHistory(app, kw)) {
+        saveToHistory(kw);
+      }
 
       document.querySelectorAll(".app-item").forEach(el => {
         el.classList.remove("selected");
@@ -858,34 +889,48 @@
       radio.checked = true;
       wrapper.classList.add("selected");
 
-      const query = app.query.replace(/__KW__/g, kw);
-      const url = app.base + encodeURIComponent(query);
+      const url = buildAppUrl(app, kw);
 
       window.open(url, "_blank");
     });
+
+    return wrapper;
+  };
+
+  appGroups.forEach(group => {
+    const groupEl = document.createElement("section");
+    groupEl.className = "app-group";
+    groupEl.dataset.tone = group.tone;
+
+    const header = document.createElement("div");
+    header.className = "app-group-header";
+    header.textContent = group.title;
+
+    const grid = document.createElement("div");
+    grid.className = "app-grid";
+
+    group.apps.forEach(app => {
+      grid.appendChild(createAppTile(app));
+    });
+
+    groupEl.appendChild(header);
+    groupEl.appendChild(grid);
+    appListEl.appendChild(groupEl);
   });
 
   const executeGoogleSearch = () => {
-    const keyword = googleSearchInput.value.trim();
+    const keyword = keywordInput.value.trim();
 
     if (!keyword) {
       alert("検索キーワードを入力してください。");
       return;
     }
 
-    localStorage.setItem("google_search_kw", keyword);
-
     const searchUrl = "https://www.google.com/search?q=" + encodeURIComponent(keyword);
     window.open(searchUrl, "_blank");
   };
 
   googleSearchBtn.addEventListener("click", executeGoogleSearch);
-
-  googleSearchInput.addEventListener("keypress", (e) => {
-    if (e.key === "Enter") {
-      executeGoogleSearch();
-    }
-  });
 })();
 </script>
 </body>
