@@ -354,10 +354,40 @@
 
   .app-group-header {
     padding: 10px 14px;
-    text-align: center;
     font-size: 15px;
     font-weight: 800;
     letter-spacing: 0.02em;
+  }
+
+  .app-group-header-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .approval-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 28px;
+    padding: 4px 9px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.72);
+    color: #374151;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .approval-toggle input {
+    width: 14px;
+    height: 14px;
+    margin: 0;
+    accent-color: #2563eb;
   }
 
   .app-group[data-tone="common"] .app-group-header {
@@ -679,6 +709,8 @@
 <script>
 (function () {
   const kintoneOrigin = "https://jichiro-osaka.cybozu.com";
+  const approvalSearchQuery = '担当部長 in (" USER", "k-iwata@jichiro-osaka.gr.jp")';
+  let approvalSearchMode = false;
 
   const appGroups = [
     {
@@ -740,12 +772,14 @@
     {
       title: "経費等支払・請求申請",
       tone: "expense",
+      approvalMode: true,
       apps: [
         {
           key: "expense",
           id: "103",
           labelMain: "経費精算申請",
           icon: "assets/expense.png",
+          approvalSearch: true,
           mode: "query",
           base: kintoneOrigin + "/k/103/?q=&view=11124481&query=",
           query:
@@ -757,6 +791,7 @@
           id: "105",
           labelMain: "飲食精算申請",
           icon: "assets/food.png",
+          approvalSearch: true,
           mode: "query",
           base: kintoneOrigin + "/k/105/?view=20&query=",
           query:
@@ -769,6 +804,7 @@
           id: "117",
           labelMain: "旅費交通費申請",
           icon: "assets/travel.png",
+          approvalSearch: true,
           mode: "query",
           base: kintoneOrigin + "/k/117/?query=",
           query:
@@ -781,6 +817,7 @@
           id: "112",
           labelMain: "講演料・報酬",
           icon: "assets/speaker.png",
+          approvalSearch: true,
           mode: "query",
           base: kintoneOrigin + "/k/112/?view=20&query=",
           query:
@@ -891,7 +928,26 @@
     return app.topUrl || (kintoneOrigin + "/k/" + app.id + "/");
   };
 
+  const encodeKintoneQuery = (query) => {
+    return encodeURIComponent(query)
+      .replace(/\(/g, "%28")
+      .replace(/\)/g, "%29")
+      .replace(/%20/g, "+");
+  };
+
+  const buildApprovalSearchUrl = (app) => {
+    return kintoneOrigin + "/k/" + app.id + "/?view=20&query=" + encodeKintoneQuery(approvalSearchQuery);
+  };
+
+  const shouldUseApprovalSearch = (app) => {
+    return Boolean(approvalSearchMode && app.approvalSearch);
+  };
+
   const buildAppUrl = (app, kw) => {
+    if (shouldUseApprovalSearch(app)) {
+      return buildApprovalSearchUrl(app);
+    }
+
     if (app.mode === "top" || !kw) {
       return topUrlForApp(app);
     }
@@ -905,7 +961,7 @@
   };
 
   const shouldSaveHistory = (app, kw) => {
-    return Boolean(kw && app.mode !== "top");
+    return Boolean(kw && app.mode !== "top" && !shouldUseApprovalSearch(app));
   };
 
   const createAppTile = (app) => {
@@ -975,7 +1031,33 @@
 
     const header = document.createElement("div");
     header.className = "app-group-header";
-    header.textContent = group.title;
+
+    const headerContent = document.createElement("div");
+    headerContent.className = "app-group-header-content";
+
+    const headerTitle = document.createElement("span");
+    headerTitle.textContent = group.title;
+    headerContent.appendChild(headerTitle);
+
+    if (group.approvalMode) {
+      const approvalLabel = document.createElement("label");
+      approvalLabel.className = "approval-toggle";
+
+      const approvalInput = document.createElement("input");
+      approvalInput.type = "checkbox";
+      approvalInput.addEventListener("change", () => {
+        approvalSearchMode = approvalInput.checked;
+      });
+
+      const approvalText = document.createElement("span");
+      approvalText.textContent = "承認検索";
+
+      approvalLabel.appendChild(approvalInput);
+      approvalLabel.appendChild(approvalText);
+      headerContent.appendChild(approvalLabel);
+    }
+
+    header.appendChild(headerContent);
 
     const grid = document.createElement("div");
     grid.className = "app-grid";
