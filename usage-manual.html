@@ -247,9 +247,10 @@
     <a href="#history">4. 検索履歴</a>
     <a href="#apps">5. Kintoneアプリボタン</a>
     <a href="#google">6. Google検索</a>
-    <a href="#garoon">7. ガルーン日程一覧</a>
-    <a href="#trouble">8. うまく開かないとき</a>
-    <a href="#admin">9. 管理者向けメモ</a>
+    <a href="#reception-form">7. 会議参加受付フォームURL</a>
+    <a href="#garoon">8. ガルーン日程一覧</a>
+    <a href="#trouble">9. うまく開かないとき</a>
+    <a href="#admin">10. 管理者向けメモ</a>
   </nav>
 
   <section id="overview">
@@ -258,6 +259,7 @@
       <li>会議名称を入力して、対象のKintoneアプリを検索できます。</li>
       <li>会議名称が未入力の場合は、選択したKintoneアプリのトップページを開きます。</li>
       <li>同じ入力欄の文字でGoogle検索できます。</li>
+      <li>会議参加受付フォームに会議名を引き継ぐURLを生成できます。</li>
       <li>ガルーンの書記局日程一覧を、日付指定で開けます。</li>
     </ul>
     <p class="note">このページはKintoneやガルーンのレコードを直接作成・更新・削除するものではありません。</p>
@@ -375,8 +377,19 @@
     </ul>
   </section>
 
+  <section id="reception-form">
+    <h2>7. 会議参加受付フォームURL</h2>
+    <p><code>会議名称（あいまい検索）</code> に文字を入力すると、右側の <code>会議参加受付フォームURL</code> にフォーム用URLが自動生成されます。</p>
+    <ol>
+      <li><code>会議・行事登録</code> の <code>会議・集会名等</code> と完全一致する名称を入力します。</li>
+      <li><code>コピー</code> をクリックして、発文や案内文に貼り付けます。</li>
+      <li><code>開いて確認</code> をクリックして、該当会議があらかじめ選択されるかテストします。</li>
+    </ol>
+    <p class="note">会議名称が一致しない場合、フォーム側で正しく選択されません。QRコードを作成する場合は、生成欄に表示される英数字化されたURLを使う方が安全です。</p>
+  </section>
+
   <section id="garoon">
-    <h2>7. ガルーン日程一覧</h2>
+    <h2>8. ガルーン日程一覧</h2>
     <p>右側の <code>ガルーン日程一覧</code> で日付を選び、<code>表示</code> をクリックすると、ガルーンで一週間分の書記局日程を一覧表示します。</p>
     <ol>
       <li>日付欄で表示したい日を選びます。</li>
@@ -387,7 +400,7 @@
   </section>
 
   <section id="trouble">
-    <h2>8. うまく開かないとき</h2>
+    <h2>9. うまく開かないとき</h2>
     <h3>新しいタブが開かない</h3>
     <p>ブラウザのポップアップブロックが有効になっている可能性があります。このページからのポップアップを許可してください。</p>
     <h3>Kintoneやガルーンのログイン画面が出る</h3>
@@ -399,7 +412,7 @@
   </section>
 
   <section id="admin">
-    <h2>9. 管理者向けメモ</h2>
+    <h2>10. 管理者向けメモ</h2>
     <ul>
       <li>公開ページ: <code>https://k2r2f.github.io/josaka.links/</code></li>
       <li>GitHubリポジトリ: <code>https://github.com/K2R2F/josaka.links</code></li>

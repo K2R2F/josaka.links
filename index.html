@@ -308,6 +308,92 @@
     background-color: #e5e7eb;
   }
 
+  .form-generator {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid #e5e7eb;
+  }
+
+  .form-generator-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .form-generator-title {
+    color: #243b19;
+    font-size: 13px;
+    font-weight: 800;
+    line-height: 1.35;
+  }
+
+  .form-generator-note {
+    margin-top: 2px;
+    color: #5f6f58;
+    font-size: 11.5px;
+    line-height: 1.45;
+  }
+
+  .form-url-actions {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .form-action-btn {
+    min-height: 30px;
+    padding: 6px 10px;
+    border: 1px solid #b8d4aa;
+    border-radius: 8px;
+    background: #426b2d;
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 800;
+    line-height: 1.2;
+    cursor: pointer;
+  }
+
+  .form-action-btn.secondary {
+    background: #ffffff;
+    color: #426b2d;
+  }
+
+  .form-action-btn:hover:not(:disabled) {
+    filter: brightness(0.96);
+  }
+
+  .form-action-btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  .form-url-output {
+    width: 100%;
+    height: 38px;
+    margin-top: 8px;
+    padding: 0 10px;
+    border: 1px solid #cfd6e3;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #1f2937;
+    font-size: 12.5px;
+    outline: none;
+  }
+
+  .form-url-output:focus {
+    border-color: #73a856;
+    box-shadow: 0 0 0 3px rgba(115, 168, 86, 0.16);
+  }
+
+  .form-url-status {
+    margin-top: 6px;
+    color: #5f6f58;
+    font-size: 11.5px;
+    line-height: 1.45;
+  }
+
   .search-history-container {
     display: none;
     flex-wrap: wrap;
@@ -628,6 +714,15 @@
       width: 100%;
     }
 
+    .form-generator-top {
+      gap: 8px;
+    }
+
+    .form-url-actions,
+    .form-action-btn {
+      width: 100%;
+    }
+
     .app-grid {
       grid-template-columns: 1fr;
     }
@@ -731,6 +826,28 @@
           <button type="button" id="garoonScheduleBtn">表示</button>
         </div>
         <div class="garoon-hint">選択日から一週間分の書記局日程を開きます。</div>
+      </div>
+
+      <div class="form-generator" aria-label="会議参加受付フォームURLジェネレーター">
+        <div class="form-generator-top">
+          <div>
+            <div class="form-generator-title">会議参加受付フォームURL</div>
+            <div class="form-generator-note">会議名称欄から自動生成します。名称は「会議・集会名等」と完全一致させてください。</div>
+          </div>
+          <div class="form-url-actions">
+            <button type="button" id="copyFormUrlBtn" class="form-action-btn" disabled>コピー</button>
+            <button type="button" id="openFormUrlBtn" class="form-action-btn secondary" disabled>開いて確認</button>
+          </div>
+        </div>
+        <input
+          type="text"
+          id="formUrlOutput"
+          class="form-url-output"
+          readonly
+          placeholder="会議名称を入力するとURLを自動生成"
+          aria-label="生成された会議参加受付フォームURL"
+        />
+        <div id="formUrlStatus" class="form-url-status" aria-live="polite">会議名称を入力するとURLを自動生成します。</div>
       </div>
     </div>
   </div>
@@ -871,18 +988,53 @@
   const clearBtn = document.getElementById("clearBtn");
   const historyContainer = document.getElementById("searchHistory");
   const googleSearchBtn = document.getElementById("googleSearchBtn");
+  const formUrlOutput = document.getElementById("formUrlOutput");
+  const copyFormUrlBtn = document.getElementById("copyFormUrlBtn");
+  const openFormUrlBtn = document.getElementById("openFormUrlBtn");
+  const formUrlStatus = document.getElementById("formUrlStatus");
   const garoonDateInput = document.getElementById("garoonDateInput");
   const garoonScheduleBtn = document.getElementById("garoonScheduleBtn");
+  const receptionFormBaseUrl = "https://8bc8ac83.form.kintoneapp.com/public/application-form";
 
   const toggleClearBtn = () => {
     clearBtn.style.display = keywordInput.value ? "flex" : "none";
   };
 
-  keywordInput.addEventListener("input", toggleClearBtn);
+  const buildReceptionFormUrl = (meetingName) => {
+    const params = new URLSearchParams();
+    params.set("会議検索", meetingName);
+    return receptionFormBaseUrl + "?" + params.toString();
+  };
+
+  const updateReceptionFormUrl = () => {
+    const meetingName = keywordInput.value.trim();
+
+    if (!meetingName) {
+      formUrlOutput.value = "";
+      copyFormUrlBtn.disabled = true;
+      openFormUrlBtn.disabled = true;
+      formUrlStatus.textContent = "会議名称を入力するとURLを自動生成します。";
+      return "";
+    }
+
+    const url = buildReceptionFormUrl(meetingName);
+    formUrlOutput.value = url;
+    copyFormUrlBtn.disabled = false;
+    openFormUrlBtn.disabled = false;
+    formUrlStatus.textContent = "生成済みです。フォームで自動選択されるか、使用前に必ずテストしてください。";
+    return url;
+  };
+
+  const syncKeywordUi = () => {
+    toggleClearBtn();
+    updateReceptionFormUrl();
+  };
+
+  keywordInput.addEventListener("input", syncKeywordUi);
 
   clearBtn.addEventListener("click", () => {
     keywordInput.value = "";
-    toggleClearBtn();
+    syncKeywordUi();
     keywordInput.focus();
   });
 
@@ -914,7 +1066,7 @@
       textSpan.textContent = kw;
       textSpan.addEventListener("click", () => {
         keywordInput.value = kw;
-        toggleClearBtn();
+        syncKeywordUi();
         keywordInput.focus();
       });
 
@@ -949,8 +1101,8 @@
   const currentHistory = JSON.parse(localStorage.getItem("kintone_search_history") || "[]");
   if (currentHistory.length > 0) {
     keywordInput.value = currentHistory[0];
-    toggleClearBtn();
   }
+  syncKeywordUi();
 
   keywordInput.focus();
 
@@ -1114,6 +1266,55 @@
   };
 
   googleSearchBtn.addEventListener("click", executeGoogleSearch);
+
+  const copyText = async (text) => {
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(text);
+      return;
+    }
+
+    formUrlOutput.focus();
+    formUrlOutput.select();
+    const copied = document.execCommand && document.execCommand("copy");
+    const selection = window.getSelection();
+
+    if (selection) {
+      selection.removeAllRanges();
+    }
+
+    if (!copied) {
+      throw new Error("copy failed");
+    }
+  };
+
+  copyFormUrlBtn.addEventListener("click", async () => {
+    const url = updateReceptionFormUrl();
+
+    if (!url) {
+      alert("会議名称を入力してください。");
+      return;
+    }
+
+    try {
+      await copyText(url);
+      formUrlStatus.textContent = "URLをコピーしました。";
+    } catch (error) {
+      formUrlOutput.focus();
+      formUrlOutput.select();
+      formUrlStatus.textContent = "自動コピーできませんでした。URL欄を選択してコピーしてください。";
+    }
+  });
+
+  openFormUrlBtn.addEventListener("click", () => {
+    const url = updateReceptionFormUrl();
+
+    if (!url) {
+      alert("会議名称を入力してください。");
+      return;
+    }
+
+    window.open(url, "_blank");
+  });
 
   const formatLocalDate = (date) => {
     const year = date.getFullYear();
