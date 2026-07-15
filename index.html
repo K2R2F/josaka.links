@@ -212,6 +212,11 @@
     outline-offset: 2px;
   }
 
+  .settings-button {
+    font-family: inherit;
+    cursor: pointer;
+  }
+
   .card-sub {
     font-size: 12px;
     color: #6b7280;
@@ -309,6 +314,8 @@
   }
 
   .form-generator {
+    min-width: 0;
+    max-width: 100%;
     margin-top: 16px;
     padding-top: 16px;
     border-top: 1px solid #e5e7eb;
@@ -370,7 +377,10 @@
   }
 
   .form-url-output {
+    display: block;
     width: 100%;
+    max-width: 100%;
+    min-width: 0;
     height: 38px;
     margin-top: 8px;
     padding: 0 10px;
@@ -380,6 +390,7 @@
     color: #1f2937;
     font-size: 12.5px;
     outline: none;
+    box-sizing: border-box;
   }
 
   .form-url-output:focus {
@@ -656,6 +667,196 @@
     background: #1d4ed8;
   }
 
+  .settings-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 20;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 56px 18px 24px;
+    background: rgba(17, 24, 39, 0.38);
+  }
+
+  .settings-overlay[hidden] {
+    display: none;
+  }
+
+  .settings-dialog {
+    width: min(520px, 100%);
+    max-width: 100%;
+    min-width: 0;
+    max-height: calc(100vh - 80px);
+    overflow-x: hidden;
+    overflow-y: auto;
+    border: 1px solid #dbe1ea;
+    border-radius: 14px;
+    background: #ffffff;
+    box-shadow: 0 24px 60px rgba(15, 23, 42, 0.22);
+    box-sizing: border-box;
+  }
+
+  .settings-dialog *,
+  .settings-dialog *::before,
+  .settings-dialog *::after {
+    box-sizing: border-box;
+  }
+
+  .settings-dialog-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 18px 20px 14px;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .settings-dialog-header > div,
+  .settings-form,
+  .settings-field,
+  .settings-preview {
+    min-width: 0;
+  }
+
+  .settings-title {
+    margin: 0;
+    color: #111827;
+    font-size: 18px;
+    line-height: 1.35;
+  }
+
+  .settings-lead {
+    margin: 4px 0 0;
+    color: #6b7280;
+    font-size: 12px;
+    line-height: 1.55;
+  }
+
+  .settings-close {
+    flex: 0 0 auto;
+    width: 32px;
+    height: 32px;
+    border: 1px solid #dbe1ea;
+    border-radius: 999px;
+    background: #ffffff;
+    color: #4b5563;
+    cursor: pointer;
+  }
+
+  .settings-close:hover {
+    background: #f3f4f6;
+  }
+
+  .settings-form {
+    padding: 18px 20px 20px;
+  }
+
+  .settings-field {
+    display: block;
+    margin-bottom: 14px;
+  }
+
+  .settings-label {
+    display: block;
+    margin-bottom: 6px;
+    color: #374151;
+    font-size: 13px;
+    font-weight: 800;
+  }
+
+  .settings-field select,
+  .settings-field input {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    height: 40px;
+    padding: 0 10px;
+    border: 1px solid #cfd6e3;
+    border-radius: 9px;
+    background: #ffffff;
+    color: #111827;
+    font: inherit;
+    font-size: 14px;
+    outline: none;
+  }
+
+  .settings-field select:focus,
+  .settings-field input:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14);
+  }
+
+  .settings-hint {
+    margin-top: 5px;
+    color: #6b7280;
+    font-size: 11.5px;
+    line-height: 1.45;
+  }
+
+  .settings-preview {
+    margin-top: 4px;
+    padding: 10px;
+    border: 1px solid #e5e7eb;
+    border-radius: 9px;
+    background: #f9fafb;
+  }
+
+  .settings-preview-label {
+    margin-bottom: 6px;
+    color: #4b5563;
+    font-size: 11.5px;
+    font-weight: 800;
+  }
+
+  .settings-preview-code {
+    display: block;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    word-break: break-all;
+    white-space: normal;
+    color: #111827;
+    font-size: 11.5px;
+    line-height: 1.55;
+  }
+
+  .settings-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 16px;
+  }
+
+  .settings-action-btn {
+    min-height: 34px;
+    padding: 7px 12px;
+    border: 1px solid #cfd6e3;
+    border-radius: 9px;
+    background: #ffffff;
+    color: #374151;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+  }
+
+  .settings-action-btn.primary {
+    border-color: #426b2d;
+    background: #426b2d;
+    color: #ffffff;
+  }
+
+  .settings-action-btn:hover {
+    filter: brightness(0.97);
+  }
+
+  .settings-status {
+    min-height: 18px;
+    margin-top: 10px;
+    color: #426b2d;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
   @media (min-width: 901px) {
     .card {
       min-height: calc(100vh - 68px);
@@ -741,6 +942,15 @@
     .sidebar-links {
       grid-template-columns: 1fr;
     }
+
+    .settings-overlay {
+      padding: 20px 10px;
+    }
+
+    .settings-actions {
+      flex-direction: column-reverse;
+      align-items: stretch;
+    }
   }
 </style>
 </head>
@@ -750,6 +960,7 @@
     <div class="card">
       <div class="card-header">
         <div class="card-title">J-OSAKA Kintone横断検索</div>
+        <button type="button" id="settingsOpenBtn" class="manual-link settings-button">設定</button>
         <a href="usage-manual.html" class="manual-link" target="_blank" rel="noopener noreferrer">取扱説明書</a>
       </div>
 
@@ -764,6 +975,7 @@
             type="text"
             id="keyword"
             class="search-input"
+            autocomplete="off"
             placeholder="例）春闘 など"
           />
           <button type="button" id="clearBtn" class="clear-btn" aria-label="入力をクリア" title="入力をクリア" style="display: none;">
@@ -789,8 +1001,7 @@
           <a href="https://qr.quel.jp/" class="link-btn" data-color="cyan" target="_blank" rel="noopener noreferrer">QRのススメ</a>
           <a href="https://app.bitly.com/" class="link-btn" data-color="cyan" target="_blank" rel="noopener noreferrer">短縮URL</a>
           <a href="https://chouseisan.com/" class="link-btn" data-color="cyan" target="_blank" rel="noopener noreferrer">調整さん</a>
-          <a href="https://k2r2f.github.io/pdfutil/" class="link-btn" data-color="cyan" target="_blank" rel="noopener noreferrer">PDFツールボックス</a>
-          <a href="https://www.ilovepdf.com/ja" class="link-btn" data-color="cyan" target="_blank" rel="noopener noreferrer">I LOVE PDF</a>
+          <a href="https://k2r2f.github.io/pdfutil/tsukue_toolbox.html" class="link-btn" data-color="cyan" target="_blank" rel="noopener noreferrer">PDFワークスペース</a>
           <a href="https://www.canva.com/ja_jp/" class="link-btn" data-color="cyan" target="_blank" rel="noopener noreferrer">Canva</a>
 
           <a href="https://chatgpt.com/" class="link-btn" data-color="amber" target="_blank" rel="noopener noreferrer">ChatGPT</a>
@@ -853,11 +1064,62 @@
   </div>
 </div>
 
+<div class="settings-overlay" id="settingsOverlay" hidden>
+  <div class="settings-dialog" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+    <div class="settings-dialog-header">
+      <div>
+        <h2 id="settingsTitle" class="settings-title">設定</h2>
+        <p class="settings-lead">承認検索で使う条件を、このブラウザに保存します。</p>
+      </div>
+      <button type="button" id="settingsCloseBtn" class="settings-close" aria-label="設定を閉じる">×</button>
+    </div>
+
+    <form id="settingsForm" class="settings-form">
+      <label class="settings-field" for="approvalFieldSelect">
+        <span class="settings-label">承認検索の対象フィールド</span>
+        <select id="approvalFieldSelect">
+          <option value="担当部長">担当部長</option>
+          <option value="担当局長">担当局長</option>
+        </select>
+        <span class="settings-hint">経費等支払・請求申請の「承認検索」で使うKintoneフィールドです。</span>
+      </label>
+
+      <label class="settings-field" for="approvalUserIdInput">
+        <span class="settings-label">J-OSAKA Kintone ID（メールアドレス）</span>
+        <input
+          type="email"
+          id="approvalUserIdInput"
+          autocomplete="email"
+          placeholder="例）honyarara@jichiro-osaka.gr.jp"
+        />
+        <span class="settings-hint">ここに入力したIDを使って、承認検索用のURLを生成します。</span>
+      </label>
+
+      <div class="settings-preview">
+        <div class="settings-preview-label">生成されるquery部分</div>
+        <code id="approvalQueryPreview" class="settings-preview-code"></code>
+      </div>
+
+      <div class="settings-actions">
+        <button type="button" id="settingsResetBtn" class="settings-action-btn">初期値に戻す</button>
+        <button type="submit" class="settings-action-btn primary">保存</button>
+      </div>
+      <div id="settingsStatus" class="settings-status" aria-live="polite"></div>
+    </form>
+  </div>
+</div>
+
 <script>
 (function () {
   const kintoneOrigin = "https://jichiro-osaka.cybozu.com";
-  const approvalSearchQuery = '担当部長 in (" USER", "k-iwata@jichiro-osaka.gr.jp")';
+  const approvalSettingsStorageKey = "josaka_kintone_approval_settings_v2";
+  const approvalSettingFields = ["担当部長", "担当局長"];
+  const defaultApprovalSettings = {
+    field: "担当部長",
+    userId: ""
+  };
   let approvalSearchMode = false;
+  let approvalSettings = Object.assign({}, defaultApprovalSettings);
 
   const appGroups = [
     {
@@ -988,6 +1250,15 @@
   const clearBtn = document.getElementById("clearBtn");
   const historyContainer = document.getElementById("searchHistory");
   const googleSearchBtn = document.getElementById("googleSearchBtn");
+  const settingsOpenBtn = document.getElementById("settingsOpenBtn");
+  const settingsOverlay = document.getElementById("settingsOverlay");
+  const settingsCloseBtn = document.getElementById("settingsCloseBtn");
+  const settingsForm = document.getElementById("settingsForm");
+  const approvalFieldSelect = document.getElementById("approvalFieldSelect");
+  const approvalUserIdInput = document.getElementById("approvalUserIdInput");
+  const approvalQueryPreview = document.getElementById("approvalQueryPreview");
+  const settingsResetBtn = document.getElementById("settingsResetBtn");
+  const settingsStatus = document.getElementById("settingsStatus");
   const formUrlOutput = document.getElementById("formUrlOutput");
   const copyFormUrlBtn = document.getElementById("copyFormUrlBtn");
   const openFormUrlBtn = document.getElementById("openFormUrlBtn");
@@ -1038,7 +1309,7 @@
     keywordInput.focus();
   });
 
-  const MAX_HISTORY = 5;
+  const MAX_HISTORY = 6;
 
   const removeFromHistory = (kw) => {
     let history = JSON.parse(localStorage.getItem("kintone_search_history") || "[]");
@@ -1097,11 +1368,7 @@
   };
 
   renderHistory();
-
-  const currentHistory = JSON.parse(localStorage.getItem("kintone_search_history") || "[]");
-  if (currentHistory.length > 0) {
-    keywordInput.value = currentHistory[0];
-  }
+  keywordInput.value = "";
   syncKeywordUi();
 
   keywordInput.focus();
@@ -1117,8 +1384,70 @@
       .replace(/%20/g, "+");
   };
 
+  const normalizeApprovalSettings = (settings) => {
+    const field = approvalSettingFields.includes(settings && settings.field)
+      ? settings.field
+      : defaultApprovalSettings.field;
+    const userId = String(settings && settings.userId ? settings.userId : "").trim();
+
+    return { field, userId };
+  };
+
+  const loadApprovalSettings = () => {
+    try {
+      return normalizeApprovalSettings(JSON.parse(localStorage.getItem(approvalSettingsStorageKey) || "{}"));
+    } catch (error) {
+      return Object.assign({}, defaultApprovalSettings);
+    }
+  };
+
+  const saveApprovalSettings = (settings) => {
+    approvalSettings = normalizeApprovalSettings(settings);
+    localStorage.setItem(approvalSettingsStorageKey, JSON.stringify(approvalSettings));
+  };
+
+  const buildApprovalSearchQuery = (settings = approvalSettings) => {
+    const currentSettings = normalizeApprovalSettings(settings);
+    if (!currentSettings.userId) {
+      return "";
+    }
+
+    return currentSettings.field + ' in (" USER", "' + currentSettings.userId + '")';
+  };
+
+  const buildApprovalQueryParam = (settings = approvalSettings) => {
+    const query = buildApprovalSearchQuery(settings);
+    return query ? encodeKintoneQuery(query) : "";
+  };
+
+  const currentSettingsFromForm = () => {
+    return normalizeApprovalSettings({
+      field: approvalFieldSelect.value,
+      userId: approvalUserIdInput.value
+    });
+  };
+
+  const updateApprovalQueryPreview = () => {
+    const queryParam = buildApprovalQueryParam(currentSettingsFromForm());
+    approvalQueryPreview.textContent = queryParam
+      ? "&query=" + queryParam
+      : "IDを入力するとquery部分を表示します。";
+  };
+
+  const syncSettingsForm = () => {
+    approvalFieldSelect.value = approvalSettings.field;
+    approvalUserIdInput.value = approvalSettings.userId;
+    settingsStatus.textContent = "";
+    updateApprovalQueryPreview();
+  };
+
+  approvalSettings = loadApprovalSettings();
+
   const buildApprovalSearchUrl = (app) => {
-    return kintoneOrigin + "/k/" + app.id + "/?view=20&query=" + encodeKintoneQuery(approvalSearchQuery);
+    const queryParam = buildApprovalQueryParam();
+    return queryParam
+      ? kintoneOrigin + "/k/" + app.id + "/?view=20&query=" + queryParam
+      : "";
   };
 
   const shouldUseApprovalSearch = (app) => {
@@ -1184,8 +1513,15 @@
     }
     wrapper.appendChild(textWrap);
 
-    wrapper.addEventListener("click", () => {
+    wrapper.addEventListener("click", (event) => {
+      event.preventDefault();
+
       const kw = keywordInput.value.trim();
+
+      if (shouldUseApprovalSearch(app) && !approvalSettings.userId) {
+        alert('IDが設定されていないため、「承認検索」機能を使う場合はIDを「設定」してください。');
+        return;
+      }
 
       if (shouldSaveHistory(app, kw)) {
         saveToHistory(kw);
@@ -1266,6 +1602,62 @@
   };
 
   googleSearchBtn.addEventListener("click", executeGoogleSearch);
+
+  const openSettings = () => {
+    syncSettingsForm();
+    settingsOverlay.hidden = false;
+    approvalUserIdInput.focus();
+  };
+
+  const closeSettings = () => {
+    settingsOverlay.hidden = true;
+    settingsOpenBtn.focus();
+  };
+
+  settingsOpenBtn.addEventListener("click", openSettings);
+  settingsCloseBtn.addEventListener("click", closeSettings);
+
+  settingsOverlay.addEventListener("click", (event) => {
+    if (event.target === settingsOverlay) {
+      closeSettings();
+    }
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && !settingsOverlay.hidden) {
+      closeSettings();
+    }
+  });
+
+  approvalFieldSelect.addEventListener("change", () => {
+    settingsStatus.textContent = "";
+    updateApprovalQueryPreview();
+  });
+
+  approvalUserIdInput.addEventListener("input", () => {
+    settingsStatus.textContent = "";
+    updateApprovalQueryPreview();
+  });
+
+  settingsForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+
+    if (!settingsForm.reportValidity()) {
+      return;
+    }
+
+    saveApprovalSettings(currentSettingsFromForm());
+    syncSettingsForm();
+    settingsStatus.textContent = "設定を保存しました。";
+  });
+
+  settingsResetBtn.addEventListener("click", () => {
+    saveApprovalSettings(defaultApprovalSettings);
+    syncSettingsForm();
+    settingsStatus.textContent = "初期値に戻しました。";
+  });
+
+  syncSettingsForm();
 
   const copyText = async (text) => {
     if (navigator.clipboard && window.isSecureContext) {
