@@ -433,6 +433,10 @@
 
   .history-chip-text {
     padding: 5px 6px 5px 12px;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
     cursor: pointer;
   }
 
@@ -441,13 +445,22 @@
     align-items: center;
     justify-content: center;
     padding: 5px 10px 5px 4px;
+    border: 0;
+    background: transparent;
     color: #9ca3af;
+    font: inherit;
     cursor: pointer;
     transition: color 0.15s;
   }
 
   .history-chip-delete:hover {
     color: #ef4444;
+  }
+
+  .history-chip-text:focus-visible,
+  .history-chip-delete:focus-visible {
+    outline: 2px solid #2563eb;
+    outline-offset: -2px;
   }
 
   .app-section {
@@ -539,11 +552,14 @@
     justify-content: center;
     gap: 8px;
     min-height: 136px;
+    width: 100%;
     padding: 14px 12px;
     border: 0;
     border-right: 1px solid rgba(255, 255, 255, 0.85);
     border-bottom: 1px solid rgba(255, 255, 255, 0.85);
     border-radius: 0;
+    color: inherit;
+    font-family: inherit;
     font-size: 13px;
     text-align: center;
     cursor: pointer;
@@ -569,10 +585,10 @@
     box-shadow: inset 0 0 0 3px rgba(37, 99, 235, 0.45);
   }
 
-  .app-radio {
-    position: absolute;
-    opacity: 0;
-    pointer-events: none;
+  .app-item:focus-visible {
+    z-index: 1;
+    outline: 3px solid #2563eb;
+    outline-offset: -3px;
   }
 
   .app-icon-image {
@@ -583,6 +599,7 @@
   }
 
   .app-label-main {
+    display: block;
     font-size: 13px;
     font-weight: 700;
     margin-bottom: 2px;
@@ -1006,7 +1023,7 @@
 
           <a href="https://chatgpt.com/" class="link-btn" data-color="amber" target="_blank" rel="noopener noreferrer">ChatGPT</a>
           <a href="https://gemini.google.com/app" class="link-btn" data-color="amber" target="_blank" rel="noopener noreferrer">Google Gemini</a>
-          <a href="https://notebooklm.google.com/" class="link-btn" data-color="amber" target="_blank" rel="noopener noreferrer">NotebookLM</a>
+          <a href="https://notebooklm.google.com/" class="link-btn" data-color="amber" target="_blank" rel="noopener noreferrer">Notebooks</a>
           <a href="https://claude.ai/new" class="link-btn" data-color="amber" target="_blank" rel="noopener noreferrer">Claude</a>
 
           <a href="https://www.daiichihoki.co.jp/jichi/47link/" class="link-btn" data-color="fuchsia" target="_blank" rel="noopener noreferrer">全国地方自治体リンク</a>
@@ -1112,6 +1129,8 @@
 <script>
 (function () {
   const kintoneOrigin = "https://jichiro-osaka.cybozu.com";
+  const searchHistoryStorageKey = "josaka_links_search_history_v1";
+  const legacySearchHistoryStorageKey = "kintone_search_history";
   const approvalSettingsStorageKey = "josaka_kintone_approval_settings_v2";
   const approvalSettingFields = ["担当部長", "担当局長"];
   const defaultApprovalSettings = {
@@ -1310,17 +1329,79 @@
   });
 
   const MAX_HISTORY = 6;
+  let historyMemory = [];
+  let historyStorageUnavailable = false;
+
+  const readStorageItem = (key) => {
+    try {
+      return localStorage.getItem(key);
+    } catch (error) {
+      return null;
+    }
+  };
+
+  const writeStorageItem = (key, value) => {
+    try {
+      localStorage.setItem(key, value);
+      return true;
+    } catch (error) {
+      return false;
+    }
+  };
+
+  const parseHistory = (value) => {
+    if (!value) {
+      return [];
+    }
+
+    try {
+      const parsed = JSON.parse(value);
+      return Array.isArray(parsed)
+        ? parsed.filter(item => typeof item === "string" && item.trim()).slice(0, MAX_HISTORY)
+        : [];
+    } catch (error) {
+      return [];
+    }
+  };
+
+  const loadHistory = () => {
+    if (historyStorageUnavailable) {
+      return historyMemory.slice();
+    }
+
+    const storedHistory = readStorageItem(searchHistoryStorageKey);
+
+    if (storedHistory !== null) {
+      historyMemory = parseHistory(storedHistory);
+      return historyMemory.slice();
+    }
+
+    const legacyHistory = readStorageItem(legacySearchHistoryStorageKey);
+    if (legacyHistory !== null) {
+      historyMemory = parseHistory(legacyHistory);
+      historyStorageUnavailable = !writeStorageItem(searchHistoryStorageKey, JSON.stringify(historyMemory));
+    }
+
+    return historyMemory.slice();
+  };
+
+  const persistHistory = (history) => {
+    historyMemory = history.slice(0, MAX_HISTORY);
+    if (!historyStorageUnavailable) {
+      historyStorageUnavailable = !writeStorageItem(searchHistoryStorageKey, JSON.stringify(historyMemory));
+    }
+  };
 
   const removeFromHistory = (kw) => {
-    let history = JSON.parse(localStorage.getItem("kintone_search_history") || "[]");
+    let history = loadHistory();
     history = history.filter(item => item !== kw);
-    localStorage.setItem("kintone_search_history", JSON.stringify(history));
+    persistHistory(history);
     renderHistory();
   };
 
   const renderHistory = () => {
     historyContainer.innerHTML = "";
-    const history = JSON.parse(localStorage.getItem("kintone_search_history") || "[]");
+    const history = loadHistory();
 
     if (history.length === 0) {
       historyContainer.style.display = "none";
@@ -1332,38 +1413,38 @@
       const chip = document.createElement("div");
       chip.className = "history-chip";
 
-      const textSpan = document.createElement("span");
-      textSpan.className = "history-chip-text";
-      textSpan.textContent = kw;
-      textSpan.addEventListener("click", () => {
+      const textButton = document.createElement("button");
+      textButton.type = "button";
+      textButton.className = "history-chip-text";
+      textButton.textContent = kw;
+      textButton.addEventListener("click", () => {
         keywordInput.value = kw;
         syncKeywordUi();
         keywordInput.focus();
       });
 
-      const delBtn = document.createElement("span");
+      const delBtn = document.createElement("button");
+      delBtn.type = "button";
       delBtn.className = "history-chip-delete";
       delBtn.innerHTML = '<svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>';
       delBtn.title = "この履歴を削除";
+      delBtn.setAttribute("aria-label", kw + "を履歴から削除");
       delBtn.addEventListener("click", (e) => {
         e.stopPropagation();
         removeFromHistory(kw);
       });
 
-      chip.appendChild(textSpan);
+      chip.appendChild(textButton);
       chip.appendChild(delBtn);
       historyContainer.appendChild(chip);
     });
   };
 
   const saveToHistory = (kw) => {
-    let history = JSON.parse(localStorage.getItem("kintone_search_history") || "[]");
+    let history = loadHistory();
     history = history.filter(item => item !== kw);
     history.unshift(kw);
-    if (history.length > MAX_HISTORY) {
-      history.pop();
-    }
-    localStorage.setItem("kintone_search_history", JSON.stringify(history));
+    persistHistory(history);
     renderHistory();
   };
 
@@ -1384,6 +1465,12 @@
       .replace(/%20/g, "+");
   };
 
+  const escapeKintoneQueryValue = (value) => {
+    return String(value)
+      .replace(/\\/g, "\\\\")
+      .replace(/"/g, '\\"');
+  };
+
   const normalizeApprovalSettings = (settings) => {
     const field = approvalSettingFields.includes(settings && settings.field)
       ? settings.field
@@ -1395,7 +1482,7 @@
 
   const loadApprovalSettings = () => {
     try {
-      return normalizeApprovalSettings(JSON.parse(localStorage.getItem(approvalSettingsStorageKey) || "{}"));
+      return normalizeApprovalSettings(JSON.parse(readStorageItem(approvalSettingsStorageKey) || "{}"));
     } catch (error) {
       return Object.assign({}, defaultApprovalSettings);
     }
@@ -1403,7 +1490,7 @@
 
   const saveApprovalSettings = (settings) => {
     approvalSettings = normalizeApprovalSettings(settings);
-    localStorage.setItem(approvalSettingsStorageKey, JSON.stringify(approvalSettings));
+    return writeStorageItem(approvalSettingsStorageKey, JSON.stringify(approvalSettings));
   };
 
   const buildApprovalSearchQuery = (settings = approvalSettings) => {
@@ -1412,7 +1499,7 @@
       return "";
     }
 
-    return currentSettings.field + ' in (" USER", "' + currentSettings.userId + '")';
+    return currentSettings.field + ' in (" USER", "' + escapeKintoneQueryValue(currentSettings.userId) + '")';
   };
 
   const buildApprovalQueryParam = (settings = approvalSettings) => {
@@ -1467,7 +1554,8 @@
       return kintoneOrigin + "/k/search?keyword=" + encodeURIComponent(kw) + "&app=" + encodeURIComponent(app.id);
     }
 
-    const query = app.query.replace(/__KW__/g, kw);
+    const escapedKeyword = escapeKintoneQueryValue(kw);
+    const query = app.query.replace(/__KW__/g, () => escapedKeyword);
     return app.base + encodeURIComponent(query);
   };
 
@@ -1476,19 +1564,11 @@
   };
 
   const createAppTile = (app) => {
-    const id = "app_" + app.key;
-
-    const wrapper = document.createElement("label");
+    const wrapper = document.createElement("button");
+    wrapper.type = "button";
     wrapper.className = "app-item";
     wrapper.dataset.appId = app.id;
     wrapper.dataset.appKey = app.key;
-
-    const radio = document.createElement("input");
-    radio.type = "radio";
-    radio.name = "app";
-    radio.value = app.key;
-    radio.id = id;
-    radio.className = "app-radio";
 
     let icon = null;
     if (app.icon) {
@@ -1499,23 +1579,20 @@
       icon.loading = "lazy";
     }
 
-    const textWrap = document.createElement("div");
+    const textWrap = document.createElement("span");
 
-    const main = document.createElement("div");
+    const main = document.createElement("span");
     main.className = "app-label-main";
     main.textContent = app.labelMain;
 
     textWrap.appendChild(main);
 
-    wrapper.appendChild(radio);
     if (icon) {
       wrapper.appendChild(icon);
     }
     wrapper.appendChild(textWrap);
 
-    wrapper.addEventListener("click", (event) => {
-      event.preventDefault();
-
+    wrapper.addEventListener("click", () => {
       const kw = keywordInput.value.trim();
 
       if (shouldUseApprovalSearch(app) && !approvalSettings.userId) {
@@ -1531,7 +1608,6 @@
         el.classList.remove("selected");
       });
 
-      radio.checked = true;
       wrapper.classList.add("selected");
 
       const url = buildAppUrl(app, kw);
@@ -1603,6 +1679,15 @@
 
   googleSearchBtn.addEventListener("click", executeGoogleSearch);
 
+  keywordInput.addEventListener("keydown", (event) => {
+    if (event.key !== "Enter" || event.isComposing || event.keyCode === 229) {
+      return;
+    }
+
+    event.preventDefault();
+    executeGoogleSearch();
+  });
+
   const openSettings = () => {
     syncSettingsForm();
     settingsOverlay.hidden = false;
@@ -1646,15 +1731,19 @@
       return;
     }
 
-    saveApprovalSettings(currentSettingsFromForm());
+    const saved = saveApprovalSettings(currentSettingsFromForm());
     syncSettingsForm();
-    settingsStatus.textContent = "設定を保存しました。";
+    settingsStatus.textContent = saved
+      ? "設定を保存しました。"
+      : "このブラウザに設定を保存できませんでした。現在のページでは設定を使用できます。";
   });
 
   settingsResetBtn.addEventListener("click", () => {
-    saveApprovalSettings(defaultApprovalSettings);
+    const saved = saveApprovalSettings(defaultApprovalSettings);
     syncSettingsForm();
-    settingsStatus.textContent = "初期値に戻しました。";
+    settingsStatus.textContent = saved
+      ? "初期値に戻しました。"
+      : "初期値に戻しましたが、このブラウザには保存できませんでした。";
   });
 
   syncSettingsForm();
