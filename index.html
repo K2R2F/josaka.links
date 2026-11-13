@@ -2,6 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="robots" content="noindex" />
 <title>J-OSAKA Kintone横断検索</title>
 <style>
@@ -313,98 +314,6 @@
     background-color: #e5e7eb;
   }
 
-  .form-generator {
-    min-width: 0;
-    max-width: 100%;
-    margin-top: 16px;
-    padding-top: 16px;
-    border-top: 1px solid #e5e7eb;
-  }
-
-  .form-generator-top {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 10px;
-    flex-wrap: wrap;
-  }
-
-  .form-generator-title {
-    color: #243b19;
-    font-size: 13px;
-    font-weight: 800;
-    line-height: 1.35;
-  }
-
-  .form-generator-note {
-    margin-top: 2px;
-    color: #5f6f58;
-    font-size: 11.5px;
-    line-height: 1.45;
-  }
-
-  .form-url-actions {
-    display: flex;
-    gap: 6px;
-    flex-wrap: wrap;
-  }
-
-  .form-action-btn {
-    min-height: 30px;
-    padding: 6px 10px;
-    border: 1px solid #b8d4aa;
-    border-radius: 8px;
-    background: #426b2d;
-    color: #ffffff;
-    font-size: 12px;
-    font-weight: 800;
-    line-height: 1.2;
-    cursor: pointer;
-  }
-
-  .form-action-btn.secondary {
-    background: #ffffff;
-    color: #426b2d;
-  }
-
-  .form-action-btn:hover:not(:disabled) {
-    filter: brightness(0.96);
-  }
-
-  .form-action-btn:disabled {
-    opacity: 0.45;
-    cursor: not-allowed;
-  }
-
-  .form-url-output {
-    display: block;
-    width: 100%;
-    max-width: 100%;
-    min-width: 0;
-    height: 38px;
-    margin-top: 8px;
-    padding: 0 10px;
-    border: 1px solid #cfd6e3;
-    border-radius: 8px;
-    background: #ffffff;
-    color: #1f2937;
-    font-size: 12.5px;
-    outline: none;
-    box-sizing: border-box;
-  }
-
-  .form-url-output:focus {
-    border-color: #73a856;
-    box-shadow: 0 0 0 3px rgba(115, 168, 86, 0.16);
-  }
-
-  .form-url-status {
-    margin-top: 6px;
-    color: #5f6f58;
-    font-size: 11.5px;
-    line-height: 1.45;
-  }
-
   .search-history-container {
     display: none;
     flex-wrap: wrap;
@@ -621,6 +530,30 @@
     margin-bottom: 8px;
   }
 
+  .link-group + .link-group {
+    margin-top: 16px;
+  }
+
+  .link-buttons.ai-links {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .ai-links .link-btn {
+    min-width: 0;
+    min-height: 44px;
+    padding: 10px 8px;
+    border-radius: 10px;
+    font-weight: 600;
+    opacity: 1;
+  }
+
+  .link-btn:focus-visible {
+    outline: 3px solid #2563eb;
+    outline-offset: 3px;
+  }
+
   .link-buttons {
     display: flex;
     flex-wrap: wrap;
@@ -638,7 +571,12 @@
     text-decoration: none;
     color: #ffffff;
     box-shadow: none;
-    white-space: nowrap;
+    max-width: 100%;
+    box-sizing: border-box;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    text-align: center;
+    line-height: 1.5;
     transition: opacity 0.15s, filter 0.15s;
     opacity: 0.92;
   }
@@ -659,7 +597,7 @@
   }
 
   .link-btn[data-color="amber"] {
-    background: #d97706;
+    background: #92400e;
   }
 
   .link-btn[data-color="fuchsia"] {
@@ -932,17 +870,12 @@
       width: 100%;
     }
 
-    .form-generator-top {
-      gap: 8px;
-    }
-
-    .form-url-actions,
-    .form-action-btn {
-      width: 100%;
-    }
-
     .app-grid {
       grid-template-columns: 1fr;
+    }
+
+    .link-buttons.ai-links {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
     .link-buttons {
@@ -1014,23 +947,37 @@
       </div>
 
       <div class="link-section">
-        <div class="link-buttons">
-          <a href="https://qr.quel.jp/" class="link-btn" data-color="cyan" target="_blank" rel="noopener noreferrer">QRのススメ</a>
-          <a href="https://app.bitly.com/" class="link-btn" data-color="cyan" target="_blank" rel="noopener noreferrer">短縮URL</a>
-          <a href="https://chouseisan.com/" class="link-btn" data-color="cyan" target="_blank" rel="noopener noreferrer">調整さん</a>
-          <a href="https://k2r2f.github.io/pdfutil/tsukue_toolbox.html" class="link-btn" data-color="cyan" target="_blank" rel="noopener noreferrer">PDFワークスペース</a>
-          <a href="https://www.canva.com/ja_jp/" class="link-btn" data-color="cyan" target="_blank" rel="noopener noreferrer">Canva</a>
+        <div class="link-group" role="group" aria-labelledby="toolsLinksTitle">
+          <div class="link-section-title" id="toolsLinksTitle">便利ツール</div>
+          <div class="link-buttons">
+            <a href="https://qr.quel.jp/" class="link-btn" data-color="cyan" target="_blank" rel="noopener noreferrer">QRのススメ</a>
+            <a href="https://app.bitly.com/" class="link-btn" data-color="cyan" target="_blank" rel="noopener noreferrer">短縮URL</a>
+            <a href="https://chouseisan.com/" class="link-btn" data-color="cyan" target="_blank" rel="noopener noreferrer">調整さん</a>
+            <a href="https://k2r2f.github.io/pdfutil/tsukue_toolbox.html" class="link-btn" data-color="cyan" target="_blank" rel="noopener noreferrer">PDFワークスペース</a>
+            <a href="https://www.canva.com/ja_jp/" class="link-btn" data-color="cyan" target="_blank" rel="noopener noreferrer">Canva</a>
+            <a href="https://github.com/" class="link-btn" data-color="cyan" target="_blank" rel="noopener noreferrer">Github</a>
+          </div>
+        </div>
 
-          <a href="https://chatgpt.com/" class="link-btn" data-color="amber" target="_blank" rel="noopener noreferrer">ChatGPT</a>
-          <a href="https://gemini.google.com/app" class="link-btn" data-color="amber" target="_blank" rel="noopener noreferrer">Google Gemini</a>
-          <a href="https://notebooklm.google.com/" class="link-btn" data-color="amber" target="_blank" rel="noopener noreferrer">Notebooks</a>
-          <a href="https://claude.ai/new" class="link-btn" data-color="amber" target="_blank" rel="noopener noreferrer">Claude</a>
+        <div class="link-group" role="group" aria-labelledby="aiLinksTitle">
+          <div class="link-section-title" id="aiLinksTitle">AI</div>
+          <div class="link-buttons ai-links">
+            <a href="https://chatgpt.com/" class="link-btn" data-color="amber" target="_blank" rel="noopener noreferrer">ChatGPT</a>
+            <a href="https://gemini.google.com/app" class="link-btn" data-color="amber" target="_blank" rel="noopener noreferrer">Google Gemini</a>
+            <a href="https://notebooklm.google.com/" class="link-btn" data-color="amber" target="_blank" rel="noopener noreferrer">NotebookLM</a>
+            <a href="https://claude.ai/new" class="link-btn" data-color="amber" target="_blank" rel="noopener noreferrer">Claude</a>
+          </div>
+        </div>
 
-          <a href="https://www.daiichihoki.co.jp/jichi/47link/" class="link-btn" data-color="fuchsia" target="_blank" rel="noopener noreferrer">全国地方自治体リンク</a>
-          <a href="https://jorei.slis.doshisha.ac.jp/" class="link-btn" data-color="fuchsia" target="_blank" rel="noopener noreferrer">条例Webアーカイブデータベース</a>
-          <a href="https://www.jinji.go.jp/seisaku/kisoku/ichiran.html" class="link-btn" data-color="fuchsia" target="_blank" rel="noopener noreferrer">国家公務員関係法令等一覧（人事院）</a>
-          <a href="https://www.jinji.go.jp/seisaku/kisoku/kaisei/kaisei_kisoku.html" class="link-btn" data-color="fuchsia" target="_blank" rel="noopener noreferrer">新たに公布された人事院規則の概要（人事院）</a>
-          <a href="https://www.soumu.go.jp/main_sosiki/jichi_gyousei/koumuin_seido/kaikeinendo_ninyou.html" class="link-btn" data-color="fuchsia" target="_blank" rel="noopener noreferrer">会計年度任用職員制度等（総務省）</a>
+        <div class="link-group" role="group" aria-labelledby="referenceLinksTitle">
+          <div class="link-section-title" id="referenceLinksTitle">自治体・法令</div>
+          <div class="link-buttons">
+            <a href="https://www.daiichihoki.co.jp/jichi/47link/" class="link-btn" data-color="fuchsia" target="_blank" rel="noopener noreferrer">全国地方自治体リンク</a>
+            <a href="https://jorei.slis.doshisha.ac.jp/" class="link-btn" data-color="fuchsia" target="_blank" rel="noopener noreferrer">条例Webアーカイブデータベース</a>
+            <a href="https://www.jinji.go.jp/seisaku/kisoku/ichiran.html" class="link-btn" data-color="fuchsia" target="_blank" rel="noopener noreferrer">国家公務員関係法令等一覧（人事院）</a>
+            <a href="https://www.jinji.go.jp/seisaku/kisoku/kaisei/kaisei_kisoku.html" class="link-btn" data-color="fuchsia" target="_blank" rel="noopener noreferrer">新たに公布された人事院規則の概要（人事院）</a>
+            <a href="https://www.soumu.go.jp/main_sosiki/jichi_gyousei/koumuin_seido/kaikeinendo_ninyou.html" class="link-btn" data-color="fuchsia" target="_blank" rel="noopener noreferrer">会計年度任用職員制度等（総務省）</a>
+          </div>
         </div>
       </div>
     </div>
@@ -1045,6 +992,7 @@
         <a href="https://business-panel.form-mailer.jp/account/forms" class="sidebar-link" target="_blank" rel="noopener noreferrer">フォームメーラー</a>
         <a href="http://210.175.251.178/rengo-osaka/" class="sidebar-link" target="_blank" rel="noopener noreferrer">連合大阪Online</a>
         <a href="https://www.rokin.or.jp/other/qrslip/" class="sidebar-link" target="_blank" rel="noopener noreferrer">ろうきんQR伝票作成</a>
+        <a href="https://k2r2f.github.io/kikanshi-editor-club/" class="sidebar-link" target="_blank" rel="noopener noreferrer">個人的DXのススメ【欄外】</a>
       </div>
 
       <div class="sidebar-tool">
@@ -1054,28 +1002,6 @@
           <button type="button" id="garoonScheduleBtn">表示</button>
         </div>
         <div class="garoon-hint">選択日から一週間分の書記局日程を開きます。</div>
-      </div>
-
-      <div class="form-generator" aria-label="会議参加受付フォームURLジェネレーター">
-        <div class="form-generator-top">
-          <div>
-            <div class="form-generator-title">会議参加受付フォームURL</div>
-            <div class="form-generator-note">会議名称欄から自動生成します。名称は「会議・集会名等」と完全一致させてください。</div>
-          </div>
-          <div class="form-url-actions">
-            <button type="button" id="copyFormUrlBtn" class="form-action-btn" disabled>コピー</button>
-            <button type="button" id="openFormUrlBtn" class="form-action-btn secondary" disabled>開いて確認</button>
-          </div>
-        </div>
-        <input
-          type="text"
-          id="formUrlOutput"
-          class="form-url-output"
-          readonly
-          placeholder="会議名称を入力するとURLを自動生成"
-          aria-label="生成された会議参加受付フォームURL"
-        />
-        <div id="formUrlStatus" class="form-url-status" aria-live="polite">会議名称を入力するとURLを自動生成します。</div>
       </div>
     </div>
   </div>
@@ -1278,46 +1204,15 @@
   const approvalQueryPreview = document.getElementById("approvalQueryPreview");
   const settingsResetBtn = document.getElementById("settingsResetBtn");
   const settingsStatus = document.getElementById("settingsStatus");
-  const formUrlOutput = document.getElementById("formUrlOutput");
-  const copyFormUrlBtn = document.getElementById("copyFormUrlBtn");
-  const openFormUrlBtn = document.getElementById("openFormUrlBtn");
-  const formUrlStatus = document.getElementById("formUrlStatus");
   const garoonDateInput = document.getElementById("garoonDateInput");
   const garoonScheduleBtn = document.getElementById("garoonScheduleBtn");
-  const receptionFormBaseUrl = "https://8bc8ac83.form.kintoneapp.com/public/application-form";
 
   const toggleClearBtn = () => {
     clearBtn.style.display = keywordInput.value ? "flex" : "none";
   };
 
-  const buildReceptionFormUrl = (meetingName) => {
-    const params = new URLSearchParams();
-    params.set("会議検索", meetingName);
-    return receptionFormBaseUrl + "?" + params.toString();
-  };
-
-  const updateReceptionFormUrl = () => {
-    const meetingName = keywordInput.value.trim();
-
-    if (!meetingName) {
-      formUrlOutput.value = "";
-      copyFormUrlBtn.disabled = true;
-      openFormUrlBtn.disabled = true;
-      formUrlStatus.textContent = "会議名称を入力するとURLを自動生成します。";
-      return "";
-    }
-
-    const url = buildReceptionFormUrl(meetingName);
-    formUrlOutput.value = url;
-    copyFormUrlBtn.disabled = false;
-    openFormUrlBtn.disabled = false;
-    formUrlStatus.textContent = "生成済みです。フォームで自動選択されるか、使用前に必ずテストしてください。";
-    return url;
-  };
-
   const syncKeywordUi = () => {
     toggleClearBtn();
-    updateReceptionFormUrl();
   };
 
   keywordInput.addEventListener("input", syncKeywordUi);
@@ -1747,55 +1642,6 @@
   });
 
   syncSettingsForm();
-
-  const copyText = async (text) => {
-    if (navigator.clipboard && window.isSecureContext) {
-      await navigator.clipboard.writeText(text);
-      return;
-    }
-
-    formUrlOutput.focus();
-    formUrlOutput.select();
-    const copied = document.execCommand && document.execCommand("copy");
-    const selection = window.getSelection();
-
-    if (selection) {
-      selection.removeAllRanges();
-    }
-
-    if (!copied) {
-      throw new Error("copy failed");
-    }
-  };
-
-  copyFormUrlBtn.addEventListener("click", async () => {
-    const url = updateReceptionFormUrl();
-
-    if (!url) {
-      alert("会議名称を入力してください。");
-      return;
-    }
-
-    try {
-      await copyText(url);
-      formUrlStatus.textContent = "URLをコピーしました。";
-    } catch (error) {
-      formUrlOutput.focus();
-      formUrlOutput.select();
-      formUrlStatus.textContent = "自動コピーできませんでした。URL欄を選択してコピーしてください。";
-    }
-  });
-
-  openFormUrlBtn.addEventListener("click", () => {
-    const url = updateReceptionFormUrl();
-
-    if (!url) {
-      alert("会議名称を入力してください。");
-      return;
-    }
-
-    window.open(url, "_blank");
-  });
 
   const formatLocalDate = (date) => {
     const year = date.getFullYear();
