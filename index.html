@@ -521,34 +521,6 @@
     border-top: 1px solid #e5e7eb;
   }
 
-  .link-section-title {
-    font-size: 12px;
-    font-weight: 700;
-    color: #374151;
-    text-transform: none;
-    letter-spacing: 0.02em;
-    margin-bottom: 8px;
-  }
-
-  .link-group + .link-group {
-    margin-top: 16px;
-  }
-
-  .link-buttons.ai-links {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 8px;
-  }
-
-  .ai-links .link-btn {
-    min-width: 0;
-    min-height: 44px;
-    padding: 10px 8px;
-    border-radius: 10px;
-    font-weight: 600;
-    opacity: 1;
-  }
-
   .link-btn:focus-visible {
     outline: 3px solid #2563eb;
     outline-offset: 3px;
@@ -597,7 +569,7 @@
   }
 
   .link-btn[data-color="amber"] {
-    background: #92400e;
+    background: #d97706;
   }
 
   .link-btn[data-color="fuchsia"] {
@@ -874,10 +846,6 @@
       grid-template-columns: 1fr;
     }
 
-    .link-buttons.ai-links {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
     .link-buttons {
       flex-direction: column;
       align-items: stretch;
@@ -947,37 +915,22 @@
       </div>
 
       <div class="link-section">
-        <div class="link-group" role="group" aria-labelledby="toolsLinksTitle">
-          <div class="link-section-title" id="toolsLinksTitle">便利ツール</div>
-          <div class="link-buttons">
-            <a href="https://qr.quel.jp/" class="link-btn" data-color="cyan" target="_blank" rel="noopener noreferrer">QRのススメ</a>
-            <a href="https://app.bitly.com/" class="link-btn" data-color="cyan" target="_blank" rel="noopener noreferrer">短縮URL</a>
-            <a href="https://chouseisan.com/" class="link-btn" data-color="cyan" target="_blank" rel="noopener noreferrer">調整さん</a>
-            <a href="https://k2r2f.github.io/pdfutil/tsukue_toolbox.html" class="link-btn" data-color="cyan" target="_blank" rel="noopener noreferrer">PDFワークスペース</a>
-            <a href="https://www.canva.com/ja_jp/" class="link-btn" data-color="cyan" target="_blank" rel="noopener noreferrer">Canva</a>
-            <a href="https://github.com/" class="link-btn" data-color="cyan" target="_blank" rel="noopener noreferrer">Github</a>
-          </div>
-        </div>
-
-        <div class="link-group" role="group" aria-labelledby="aiLinksTitle">
-          <div class="link-section-title" id="aiLinksTitle">AI</div>
-          <div class="link-buttons ai-links">
-            <a href="https://chatgpt.com/" class="link-btn" data-color="amber" target="_blank" rel="noopener noreferrer">ChatGPT</a>
-            <a href="https://gemini.google.com/app" class="link-btn" data-color="amber" target="_blank" rel="noopener noreferrer">Google Gemini</a>
-            <a href="https://notebooklm.google.com/" class="link-btn" data-color="amber" target="_blank" rel="noopener noreferrer">NotebookLM</a>
-            <a href="https://claude.ai/new" class="link-btn" data-color="amber" target="_blank" rel="noopener noreferrer">Claude</a>
-          </div>
-        </div>
-
-        <div class="link-group" role="group" aria-labelledby="referenceLinksTitle">
-          <div class="link-section-title" id="referenceLinksTitle">自治体・法令</div>
-          <div class="link-buttons">
-            <a href="https://www.daiichihoki.co.jp/jichi/47link/" class="link-btn" data-color="fuchsia" target="_blank" rel="noopener noreferrer">全国地方自治体リンク</a>
-            <a href="https://jorei.slis.doshisha.ac.jp/" class="link-btn" data-color="fuchsia" target="_blank" rel="noopener noreferrer">条例Webアーカイブデータベース</a>
-            <a href="https://www.jinji.go.jp/seisaku/kisoku/ichiran.html" class="link-btn" data-color="fuchsia" target="_blank" rel="noopener noreferrer">国家公務員関係法令等一覧（人事院）</a>
-            <a href="https://www.jinji.go.jp/seisaku/kisoku/kaisei/kaisei_kisoku.html" class="link-btn" data-color="fuchsia" target="_blank" rel="noopener noreferrer">新たに公布された人事院規則の概要（人事院）</a>
-            <a href="https://www.soumu.go.jp/main_sosiki/jichi_gyousei/koumuin_seido/kaikeinendo_ninyou.html" class="link-btn" data-color="fuchsia" target="_blank" rel="noopener noreferrer">会計年度任用職員制度等（総務省）</a>
-          </div>
+        <div class="link-buttons">
+          <a href="https://qr.quel.jp/" class="link-btn" data-color="cyan" target="_blank" rel="noopener noreferrer">QRのススメ</a>
+          <a href="https://app.bitly.com/" class="link-btn" data-color="cyan" target="_blank" rel="noopener noreferrer">短縮URL</a>
+          <a href="https://chouseisan.com/" class="link-btn" data-color="cyan" target="_blank" rel="noopener noreferrer">調整さん</a>
+          <a href="https://k2r2f.github.io/pdfutil/tsukue_toolbox.html" class="link-btn" data-color="cyan" target="_blank" rel="noopener noreferrer">PDFワークスペース</a>
+          <a href="https://www.canva.com/ja_jp/" class="link-btn" data-color="cyan" target="_blank" rel="noopener noreferrer">Canva</a>
+          <a href="https://github.com/" class="link-btn" data-color="cyan" target="_blank" rel="noopener noreferrer">Github</a>
+          <a href="https://chatgpt.com/" class="link-btn" data-color="amber" target="_blank" rel="noopener noreferrer">ChatGPT</a>
+          <a href="https://gemini.google.com/app" class="link-btn" data-color="amber" target="_blank" rel="noopener noreferrer">Gemini</a>
+          <a href="https://notebooklm.google.com/" class="link-btn" data-color="amber" target="_blank" rel="noopener noreferrer">Gemini Notebook</a>
+          <a href="https://claude.ai/new" class="link-btn" data-color="amber" target="_blank" rel="noopener noreferrer">Claude</a>
+          <a href="https://www.daiichihoki.co.jp/jichi/47link/" class="link-btn" data-color="fuchsia" target="_blank" rel="noopener noreferrer">全国地方自治体リンク</a>
+          <a href="https://jorei.slis.doshisha.ac.jp/" class="link-btn" data-color="fuchsia" target="_blank" rel="noopener noreferrer">条例Webアーカイブデータベース</a>
+          <a href="https://www.jinji.go.jp/seisaku/kisoku/ichiran.html" class="link-btn" data-color="fuchsia" target="_blank" rel="noopener noreferrer">国家公務員関係法令等一覧（人事院）</a>
+          <a href="https://www.jinji.go.jp/seisaku/kisoku/kaisei/kaisei_kisoku.html" class="link-btn" data-color="fuchsia" target="_blank" rel="noopener noreferrer">新たに公布された人事院規則の概要（人事院）</a>
+          <a href="https://www.soumu.go.jp/main_sosiki/jichi_gyousei/koumuin_seido/kaikeinendo_ninyou.html" class="link-btn" data-color="fuchsia" target="_blank" rel="noopener noreferrer">会計年度任用職員制度等（総務省）</a>
         </div>
       </div>
     </div>
@@ -1563,12 +1516,9 @@
   const executeGoogleSearch = () => {
     const keyword = keywordInput.value.trim();
 
-    if (!keyword) {
-      alert("検索キーワードを入力してください。");
-      return;
-    }
-
-    const searchUrl = "https://www.google.com/search?q=" + encodeURIComponent(keyword);
+    const searchUrl = keyword
+      ? "https://www.google.com/search?q=" + encodeURIComponent(keyword)
+      : "https://www.google.com/";
     window.open(searchUrl, "_blank");
   };
 
